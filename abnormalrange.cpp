@@ -5,5 +5,5 @@ AbnormalRange::AbnormalRange(QObject *parent) :
 {
     start  = 0;
     end    = 0;
-    roi    = cv::Mat();
+    roi    = cv::Mat(); 
 }
