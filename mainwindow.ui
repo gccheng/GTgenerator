@@ -26,7 +26,7 @@
    <property name="defaultUp">
     <bool>false</bool>
    </property>
-   <widget class="QMenu" name="menuA">
+   <widget class="QMenu" name="menuImport">
     <property name="title">
      <string>Import</string>
     </property>
@@ -34,9 +34,21 @@
     <addaction name="actionVideo"/>
     <addaction name="actionImages"/>
     <addaction name="separator"/>
-    <addaction name="actionGroundtruth"/>
    </widget>
-   <addaction name="menuA"/>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>Export</string>
+    </property>
+    <addaction name="actionGroundtruth_2"/>
+   </widget>
+   <widget class="QMenu" name="menuCOnfig">
+    <property name="title">
+     <string>Config</string>
+    </property>
+   </widget>
+   <addaction name="menuImport"/>
+   <addaction name="menuExport"/>
+   <addaction name="menuCOnfig"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -57,7 +69,7 @@
     <string>Images</string>
    </property>
   </action>
-  <action name="actionGroundtruth">
+  <action name="actionGroundtruth_2">
    <property name="text">
     <string>Groundtruth</string>
    </property>

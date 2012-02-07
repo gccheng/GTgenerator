@@ -24,20 +24,40 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionVideo_triggered()
 {
     QString filter = tr("Video fiels(*.avi *.mpg  *.webm*.ogg *.ogv );; All files(*.*)");
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Import Video"), "", filter);
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Import Video"), "", filter);
 
- /*   if ("" != fileName)
+    gtv = new GTVideo(VIDEO, filePath);
+
+
+    if ("" != filePath)
     {
         cv::VideoCapture cap;
-        if(!cap.open(fileName.))
+        if(!cap.open(filePath.toUtf8().constData()))
         {
             QMessageBox msgBox;
-            msgBox.setText("Cannot open video: " + fileName);
+            msgBox.setText("Cannot open video: " + filePath);
         }
         else
         {
-
+            cv::Mat frame; uint frameno = 0;
+            for(;;)
+            {
+                cap >> frame;
+                if (!frame.data)
+                {
+                    break;
+                }
+                frameno++;
+                QString filename = "";
+                filename.sprintf("%03d.tif", frameno);
+                cv::imwrite(filename.toUtf8().constData(), frame);
+            }
         }
-    }*/
+    }
+
+}
+
+void MainWindow::on_actionImages_triggered()
+{
 
 }

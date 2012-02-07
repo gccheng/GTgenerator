@@ -7,13 +7,14 @@
 
 #include "abnormalrange.h"
 
+enum SourceType {VIDEO = 1, IMAGES = 2};
+
 class GTVideo : public QObject
 {
-    enum SourceType {video = 1, images = 2};
-
     Q_OBJECT
 public:
     explicit GTVideo(QObject *parent = 0);
+    GTVideo(SourceType t, QString path);
 
 public:
 

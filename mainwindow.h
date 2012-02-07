@@ -19,8 +19,11 @@ public:
 private slots:
     void on_actionVideo_triggered();
 
+    void on_actionImages_triggered();
+
 private:
     Ui::MainWindow *ui;
+    GTVideo *gtv;
 };
 
 #endif // MAINWINDOW_H
