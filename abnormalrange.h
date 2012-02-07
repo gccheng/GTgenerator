@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include <opencv2/core/core.hpp>
+#include "opencvheader.h"
 
 class AbnormalRange : public QObject
 {

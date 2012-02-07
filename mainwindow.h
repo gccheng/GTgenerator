@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "gtvideo.h"
+#include "loadvideothread.h"
 
 namespace Ui {
     class MainWindow;
@@ -18,12 +19,14 @@ public:
 
 private slots:
     void on_actionVideo_triggered();
-
     void on_actionImages_triggered();
+
+    void videoload_completed(bool result);
 
 private:
     Ui::MainWindow *ui;
     GTVideo *gtv;
+    LoadVideoThread *videoloader;
 };
 
 #endif // MAINWINDOW_H

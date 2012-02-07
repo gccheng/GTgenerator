@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <vector>
-#include <opencv2/core/core.hpp>
+#include "opencvheader.h"
 
 #include "abnormalrange.h"
 

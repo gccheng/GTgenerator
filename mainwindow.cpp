@@ -3,11 +3,9 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDebug>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/features2d/features2d.hpp>
+#include "opencvheader.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -28,36 +26,39 @@ void MainWindow::on_actionVideo_triggered()
 
     gtv = new GTVideo(VIDEO, filePath);
 
-
     if ("" != filePath)
-    {
-        cv::VideoCapture cap;
-        if(!cap.open(filePath.toUtf8().constData()))
+    {        
+        if (QDir().exists("./source") || !QDir().mkdir("./source"))
         {
-            QMessageBox msgBox;
-            msgBox.setText("Cannot open video: " + filePath);
-        }
-        else
-        {
-            cv::Mat frame; uint frameno = 0;
-            for(;;)
-            {
-                cap >> frame;
-                if (!frame.data)
-                {
-                    break;
-                }
-                frameno++;
-                QString filename = "";
-                filename.sprintf("%03d.tif", frameno);
-                cv::imwrite(filename.toUtf8().constData(), frame);
-            }
+            videoloader = new LoadVideoThread(filePath);
+            connect(videoloader, SIGNAL(completeLoading(bool)), this, SLOT(videoload_completed(bool)), Qt::QueuedConnection);
+            videoloader->start();
         }
     }
-
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Cannot find the video/images, or \nCannot create folder ./source in " + QDir::currentPath());
+        msgBox.exec();
+    }
 }
 
 void MainWindow::on_actionImages_triggered()
 {
 
+}
+
+
+void MainWindow::videoload_completed(bool result)
+{
+    if (!result)
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Cannot create folder ./source in " + QDir::currentPath());
+        msgBox.exec();
+    }
+    else
+    {
+        qDebug() << "Video/imges have been loaded!\n";
+    }
 }

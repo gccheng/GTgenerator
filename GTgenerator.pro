@@ -12,13 +12,16 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp\
         gtvideo.cpp \
-        abnormalrange.cpp
+        abnormalrange.cpp \
+    loadvideothread.cpp
 
 HEADERS  += mainwindow.h\
             gtvideo.h \
             abnormalrange.h \
     abnormalrange.h \
-    gtvideo.h
+    gtvideo.h \
+    loadvideothread.h \
+    opencvheader.h
 
 FORMS    += mainwindow.ui
 
