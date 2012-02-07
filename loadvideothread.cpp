@@ -1,6 +1,8 @@
 #include "loadvideothread.h"
 
 #include <QTimer>
+#include <QDebug>
+
 #include "opencvheader.h"
 
 LoadVideoThread::LoadVideoThread(const QString &path, QThread *parent) :
@@ -19,6 +21,7 @@ void LoadVideoThread::run()
 
 void LoadVideoThread::startLoading()
 {
+    qDebug() << "Start loading video...";
     cv::VideoCapture cap;
     if(!cap.open(filePath.toStdString()))
     {

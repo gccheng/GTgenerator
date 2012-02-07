@@ -28,7 +28,7 @@ void MainWindow::on_actionVideo_triggered()
 
     if ("" != filePath)
     {        
-        if (QDir().exists("./source") || !QDir().mkdir("./source"))
+        if (QDir().exists("./source") || QDir().mkdir("./source"))
         {
             videoloader = new LoadVideoThread(filePath);
             connect(videoloader, SIGNAL(completeLoading(bool)), this, SLOT(videoload_completed(bool)), Qt::QueuedConnection);
