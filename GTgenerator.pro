@@ -9,7 +9,6 @@ QT       += core gui
 TARGET = GTgenerator
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         mainwindow.cpp\
         gtvideo.cpp \
