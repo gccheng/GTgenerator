@@ -33,6 +33,7 @@ void MainWindow::on_actionVideo_triggered()
             videoloader = new LoadVideoThread(filePath);
             connect(videoloader, SIGNAL(completeLoading(bool)), this, SLOT(videoload_completed(bool)), Qt::QueuedConnection);
             videoloader->start();
+
         }
     }
     else
@@ -60,5 +61,6 @@ void MainWindow::videoload_completed(bool result)
     else
     {
         qDebug() << "Video/imges have been loaded!\n";
+        ui->actionVideo->setDisabled(true);
     }
 }

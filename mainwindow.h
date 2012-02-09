@@ -23,6 +23,7 @@ private slots:
 
     void videoload_completed(bool result);
 
+
 private:
     Ui::MainWindow *ui;
     GTVideo *gtv;
