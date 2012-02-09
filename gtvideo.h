@@ -2,7 +2,7 @@
 #define GTVIDEO_H
 
 #include <QObject>
-#include <vector>
+#include <QVector>
 #include "opencvheader.h"
 
 #include "abnormalrange.h"
@@ -14,19 +14,23 @@ class GTVideo : public QObject
     Q_OBJECT
 public:
     explicit GTVideo(QObject *parent = 0);
-    GTVideo(SourceType t, QString path);
+    explicit GTVideo(SourceType t, QString path, QObject *parent = 0);
 
 public:
+    void setSource(const QVector<cv::Mat> &s);
+    void appendFrame(const cv::Mat &f);
 
+    int getFrameNumber() const;
+    const cv::Mat& retrieveFrame(int pos) const;
+    const QVector<cv::Mat>& retrieveFrames() const;
 
 private:
     SourceType type;               // data source type
     QString filePath;              // source file path
 
-    std::vector<cv::Mat> source;   // frames of the input video
-    std::vector<cv::Mat> objects;  // the generated groundtruth
-    std::vector<AbnormalRange> abnormallist;
-
+    QVector<cv::Mat> source;   // frames of the input video
+    QVector<cv::Mat> objects;  // the generated groundtruth
+    QVector<AbnormalRange> abnormallist;
 };
 
 #endif // GTVIDEO_H
