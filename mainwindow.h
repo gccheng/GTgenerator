@@ -23,6 +23,9 @@ private slots:
 
     void videoload_completed(bool result);
 
+
+    void on_horizontalSlider_sliderMoved(int position);
+
 private:
     Ui::MainWindow *ui;
     GTVideo *gtv;
