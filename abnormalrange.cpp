@@ -10,6 +10,13 @@ AbnormalRange::AbnormalRange(uint s, uint e, const cv::Mat& r, QObject *parent)
 {
 }
 
+AbnormalRange::AbnormalRange(const AbnormalRange &ar)
+{
+    start = ar.start;
+    end = ar.end;
+    roi = ar.roi;
+}
+
 void AbnormalRange::setStartEnd(uint s, uint e)
 {
     start = s;
