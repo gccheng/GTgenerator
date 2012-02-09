@@ -1,9 +1,33 @@
 #include "abnormalrange.h"
 
 AbnormalRange::AbnormalRange(QObject *parent) :
-    QObject(parent)
+    QObject(parent), start(0), end(0)
 {
-    start  = 0;
-    end    = 0;
-    roi    = cv::Mat(); 
+}
+
+AbnormalRange::AbnormalRange(uint s, uint e, const cv::Mat& r, QObject *parent)
+    :QObject(parent), start(s), end(e), roi(r)
+{
+}
+
+void AbnormalRange::setStartEnd(uint s, uint e)
+{
+    start = s;
+    end = e;
+}
+
+void AbnormalRange::setROI(const cv::Mat& r)
+{
+    roi = r;
+}
+
+
+uint AbnormalRange::getStart() const
+{
+    return start;
+}
+
+uint AbnormalRange::getEnd() const
+{
+    return end;
 }

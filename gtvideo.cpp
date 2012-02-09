@@ -7,7 +7,7 @@ GTVideo::GTVideo(QObject *parent) :
 }
 
 GTVideo::GTVideo(SourceType t, QString path, QObject *parent)
-    :type(t),filePath(path), QObject(parent)
+    :QObject(parent), type(t),filePath(path)
 {
 
 }
@@ -37,7 +37,7 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
     int sz = source.size();
     if (pos >= sz)
     {
-        qDebug() << "GTVideo::getFrame(int): Frame number out of bound.";
+        qDebug() << "GTVideo::getFrame(int): Frame number out of bound (result unreliable).";
         return cv::Mat();
     }
     else

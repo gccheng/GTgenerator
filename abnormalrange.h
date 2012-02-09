@@ -1,8 +1,17 @@
 #ifndef ABNORMALRANGE_H
 #define ABNORMALRANGE_H
 
-#include <QObject>
+/*
+ * Description: Class AbnormalRange manages the information
+ *              specifies through user's interaction, including
+ *              the start/end frame # of anomaly and the region
+ *              of interest in the start-frame.
+ * Create Date:
+ * Last Update: ##/##/####: ************
+ *
+ */
 
+#include <QObject>
 #include "opencvheader.h"
 
 class AbnormalRange : public QObject
@@ -10,9 +19,16 @@ class AbnormalRange : public QObject
     Q_OBJECT
 public:
     explicit AbnormalRange(QObject *parent = 0);
+    explicit AbnormalRange(uint s, uint e, const cv::Mat& r = cv::Mat(), QObject *parent = 0);
+
+public:
+    void setStartEnd(uint s, uint e);
+    void setROI(const cv::Mat& r);
+
+    uint getStart() const;
+    uint getEnd() const;
 
 signals:
-
 public slots:
 
 private:

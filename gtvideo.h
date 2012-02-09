@@ -1,6 +1,16 @@
 #ifndef GTVIDEO_H
 #define GTVIDEO_H
 
+/*
+ * Description: Class GTVideo is a top class for groundtruth
+ *              generation. It accepts user's input video as
+ *              source, user specified abnormal information,
+ *              and generates the groundtruth in objects.
+ * Create Date:
+ * Last Update: ##/##/####: ************
+ *
+ */
+
 #include <QObject>
 #include <QVector>
 #include "opencvheader.h"
@@ -30,7 +40,7 @@ private:
 
     QVector<cv::Mat> source;   // frames of the input video
     QVector<cv::Mat> objects;  // the generated groundtruth
-    QVector<AbnormalRange> abnormallist;
+    QVector<AbnormalRange> abnormallist; // where anomaly starts/ends
 };
 
 #endif // GTVIDEO_H
