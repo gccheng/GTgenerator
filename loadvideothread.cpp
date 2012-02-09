@@ -2,11 +2,13 @@
 
 #include <QTimer>
 #include <QDebug>
+#include <QDir>
+#include <QStringList>
 
 #include "opencvheader.h"
 
-LoadVideoThread::LoadVideoThread(const QString &path, QThread *parent) :
-    filePath(path), QThread(parent)
+LoadVideoThread::LoadVideoThread(const QString &path, SourceType t, GTVideo *v, QThread *parent) :
+    filePath(path), type(t), gtv(v), QThread(parent)
 {
     moveToThread(this);
 }
@@ -21,7 +23,20 @@ void LoadVideoThread::run()
 
 void LoadVideoThread::startLoading()
 {
+    if (type == IMAGES)
+    {
+        loadFromImages();
+    }
+    else
+    {
+        loadFromVideo();
+    }
+}
+
+void LoadVideoThread::loadFromVideo()
+{
     qDebug() << "Start loading video...";
+
     cv::VideoCapture cap;
     if(!cap.open(filePath.toStdString()))
     {
@@ -47,10 +62,45 @@ void LoadVideoThread::startLoading()
                 emit completeLoading(false);
                 break;
             }
+            gtv->appendFrame(frame);
         }
     }
 
-
-
     emit completeLoading(true);
+    exit(0);
+}
+
+void LoadVideoThread::loadFromImages()
+{
+    qDebug() << "Start loading frames...";
+
+    QDir dirImages(filePath);
+    QFileInfoList listImages = dirImages.entryInfoList(QStringList() << "*.tif" << "*.tiff" << "*.jpg" << "*.png");
+
+    if (0 == listImages.count())
+    {
+        emit completeLoading(false);
+    }
+    {
+        int frameno = 0;
+        QFileInfoList::const_iterator it = listImages.begin();
+        while(it != listImages.end())
+        {
+            cv::Mat frame = cv::imread(it->filePath().toStdString());
+
+            frameno++;  QString filename = "";
+            filename.sprintf("./source/%03d.tif", frameno);
+            bool retWrite = cv::imwrite(filename.toStdString(), frame);
+            if (!retWrite)
+            {
+                emit completeLoading(false);
+                break;
+            }
+
+            gtv->appendFrame(frame);
+            it++;
+        }
+        emit completeLoading(true);
+    }
+    exit(0);
 }
