@@ -107,3 +107,8 @@ void MainWindow::videoload_completed(bool result)
         ui->actionVideo->setDisabled(true);
     }
 }
+
+void MainWindow::on_horizontalSlider_sliderMoved(int position)
+{
+
+}
