@@ -108,7 +108,73 @@ void MainWindow::videoload_completed(bool result)
     }
 }
 
-void MainWindow::on_horizontalSlider_sliderMoved(int position)
+void MainWindow::on_Slider_videoloaded_sliderMoved(int position)
+{
+    qDebug() << "slider is moved!\n";
+}
+
+void MainWindow::on_Slider_videoloaded_sliderPressed()
+{
+    qDebug() << "slider is pressed!\n";
+}
+
+void MainWindow::on_Slider_videoloaded_valueChanged(int value)
+{
+    qDebug() << QString("value is changed to: %1").arg(value);
+
+   //qDebug() << QString("number of frames loaded: %1").arg(gtv->getFrameNumber());
+
+    if (NULL != gtv)
+   {
+       if(gtv->getFrameNumber()>0)
+         {
+          ui->Slider_videoloaded->setMaximum(gtv->getFrameNumber());
+          cv::Mat frame_curr=gtv->retrieveFrame(value);
+          QImage img_curr= QImage((const unsigned char*)( frame_curr.data),
+          frame_curr.cols,frame_curr.rows,QImage::Format_RGB888);
+
+          ui->label_fcurr->setPixmap(QPixmap::fromImage(img_curr));
+          ui->label_fcurr->setScaledContents(true);
+
+       if(value>1)
+       {
+           cv::Mat frame_prev=gtv->retrieveFrame(value-1);
+           QImage img_prev= QImage((const unsigned char*)( frame_prev.data),
+           frame_prev.cols,frame_prev.rows,QImage::Format_RGB888);
+           ui->label_fprev->setPixmap(QPixmap::fromImage(img_prev));
+           ui->label_fprev->setScaledContents(true);
+
+
+       }
+       if(value<ui->Slider_videoloaded->maximum())
+       {
+           cv::Mat frame_next=gtv->retrieveFrame(value+1);
+           QImage img_next= QImage((const unsigned char*)( frame_next.data),
+           frame_next.cols,frame_next.rows,QImage::Format_RGB888);
+           ui->label_fnext->setPixmap(QPixmap::fromImage(img_next));
+           ui->label_fnext->setScaledContents(true);
+
+
+       }
+
+    }
+}
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Please select video to load!");
+        msgBox.exec();
+    }
+
+
+}
+
+void MainWindow::on_Slider_videoloaded_sliderReleased()
+{
+
+}
+
+void MainWindow::on_actionAddBoundary_triggered()
 {
 
 }

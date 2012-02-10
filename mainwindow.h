@@ -24,7 +24,17 @@ private slots:
     void videoload_completed(bool result);
 
 
-    void on_horizontalSlider_sliderMoved(int position);
+    //void on_horizontalSlider_sliderMoved(int position);
+
+    void on_Slider_videoloaded_sliderMoved(int position);
+
+    void on_Slider_videoloaded_sliderPressed();
+
+    void on_Slider_videoloaded_valueChanged(int value);
+
+    void on_Slider_videoloaded_sliderReleased();
+
+    void on_actionAddBoundary_triggered();
 
 private:
     Ui::MainWindow *ui;
