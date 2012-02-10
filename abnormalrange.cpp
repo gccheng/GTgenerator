@@ -17,6 +17,13 @@ AbnormalRange::AbnormalRange(const AbnormalRange &ar)
     roi = ar.roi;
 }
 
+AbnormalRange& AbnormalRange::operator=(const AbnormalRange & ar)
+{
+    start = ar.start;
+    end = ar.end;
+    roi = ar.roi;
+}
+
 void AbnormalRange::setStartEnd(uint s, uint e)
 {
     start = s;
