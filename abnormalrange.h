@@ -20,6 +20,8 @@ class AbnormalRange : public QObject
 public:
     explicit AbnormalRange(QObject *parent = 0);
     explicit AbnormalRange(uint s, uint e, const cv::Mat& r = cv::Mat(), QObject *parent = 0);
+    AbnormalRange(const AbnormalRange &ar);
+    AbnormalRange& operator=(const AbnormalRange & ar);
 
 public:
     void setStartEnd(uint s, uint e);

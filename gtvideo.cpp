@@ -22,7 +22,7 @@ void GTVideo::appendFrame(const cv::Mat &f)
     source.push_back(f);
 }
 
-void GTVideo::addAbnormalRange(const QVector<AbnormalRange> &ar)
+void GTVideo::addAbnormalRange(const AbnormalRange &ar)
 {
     abnormallist.push_back(ar);
 }
@@ -32,18 +32,18 @@ void GTVideo::addGroundtruth(const cv::Mat &truth, int position)
 {
     // If position's not specified, append truth at the end
     // Note that positon is zero-based
-    if (-1 == frameno)
+    if (-1 == position)
     {
         position = abnormallist.size();
     }
 
     int n=0;
-    QVector<AbnormalRange>::iterator it = abnormallist.begin();
-    while ((it != abnormallist.end()) && (n<=position))
+    QVector<cv::Mat>::iterator it = grdtruth.begin();
+    while ((it != grdtruth.end()) && (n<=position))
     {
         it++;
     }
-    abnormallist.insert(it, truth);
+    grdtruth.insert(it, truth);
 }
 
 
