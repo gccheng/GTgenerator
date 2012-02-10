@@ -45,6 +45,7 @@ void LoadVideoThread::loadFromVideo()
     }
     else
     {
+        gtv->setFrameCount((int)cap.get(CV_CAP_PROP_FRAME_COUNT));
         cv::Mat frame; uint frameno = 0;
         for(;;)
         {
@@ -64,10 +65,9 @@ void LoadVideoThread::loadFromVideo()
             }
             gtv->appendFrame(frame);
         }
+        emit completeLoading(true);
+        exit(0);
     }
-
-    emit completeLoading(true);
-    exit(0);
 }
 
 void LoadVideoThread::loadFromImages()

@@ -17,8 +17,11 @@
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
      <widget class="QProgressBar" name="loadvideo_progressBar">
+      <property name="maximum">
+       <number>1</number>
+      </property>
       <property name="value">
-       <number>24</number>
+       <number>0</number>
       </property>
      </widget>
     </item>
@@ -55,9 +58,6 @@
            <string>TextLabel</string>
           </property>
          </widget>
-         <zorder>label_fprev</zorder>
-         <zorder>widget</zorder>
-         <zorder>widget</zorder>
         </widget>
        </item>
        <item row="0" column="1">

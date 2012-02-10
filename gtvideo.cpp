@@ -12,6 +12,18 @@ GTVideo::GTVideo(SourceType t, QString path, QObject *parent)
 
 }
 
+void GTVideo::setFrameCount(int fc)
+{
+    frameCount = fc;
+}
+
+// the count of frames in the video, equal to getFrameNumber() when the video is completed loaded.
+// Before that, the framecount may be not accurate depending on the ecoding format fo the video.
+int GTVideo::getFrameCount() const
+{
+    return frameCount;
+}
+
 void GTVideo::setSource(const QVector<cv::Mat> &s)
 {
     source = s;
@@ -46,7 +58,7 @@ void GTVideo::addGroundtruth(const cv::Mat &truth, int position)
     grdtruth.insert(it, truth);
 }
 
-
+// get the number of currently loaded frames
 int GTVideo::getFrameNumber() const
 {
     return source.size();
