@@ -1,6 +1,14 @@
 #ifndef LOADVIDEOTHREAD_H
 #define LOADVIDEOTHREAD_H
 
+/*
+ * Description: LoadVideoThread deals with loading user-specified
+ *              video using another thread.
+ * Create Date:
+ * Last Update: ##/##/####: ************
+ *
+ */
+
 #include <QObject>
 #include <QThread>
 
