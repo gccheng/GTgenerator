@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDebug>
@@ -21,6 +22,14 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+//to open window to addabnormalrange
+void MainWindow::open_window_addabnormalrange()
+{
+    newwindow_addAbnormalRange = new window_addAbnormalRange();
+    newwindow_addAbnormalRange->show();
+}
+
 
 void MainWindow::setupTimer(int interval, char method)
 {
@@ -172,6 +181,7 @@ void MainWindow::on_Slider_videoloaded_sliderMoved(int position)
 void MainWindow::on_Slider_videoloaded_sliderPressed()
 {
     qDebug() << "slider is pressed!\n";
+
 }
 
 void MainWindow::on_Slider_videoloaded_valueChanged(int value)
@@ -191,6 +201,7 @@ void MainWindow::on_Slider_videoloaded_valueChanged(int value)
             ui->label_fcurr->setPixmap(QPixmap::fromImage(img_curr));
             ui->label_fcurr->setScaledContents(true);
 
+            /*
             if(value>1)
             {
                 cv::Mat frame_prev=gtv->retrieveFrame(value-1);
@@ -209,6 +220,7 @@ void MainWindow::on_Slider_videoloaded_valueChanged(int value)
                 ui->label_fnext->setPixmap(QPixmap::fromImage(img_next));
                 ui->label_fnext->setScaledContents(true);
             }
+            */
 
         }
     }
@@ -229,5 +241,5 @@ void MainWindow::on_Slider_videoloaded_sliderReleased()
 
 void MainWindow::on_actionAddBoundary_triggered()
 {
-
+      open_window_addabnormalrange();
 }

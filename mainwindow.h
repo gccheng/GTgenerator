@@ -8,6 +8,8 @@
 #include "gtvideo.h"
 #include "loadvideothread.h"
 
+#include "window_addabnormalrange.h"
+
 namespace Ui {
     class MainWindow;
 }
@@ -31,6 +33,8 @@ private slots:
 
     void videoload_completed(bool result);
 
+    void open_window_addabnormalrange();
+
 
     //void on_horizontalSlider_sliderMoved(int position);
 
@@ -50,6 +54,9 @@ private:
     LoadVideoThread *videoloader;   // thread to load videos
 
     QTimer *timer;                  // timer for operation during video-loading and ...
+
+    window_addAbnormalRange  *newwindow_addAbnormalRange;
+
 };
 
 #endif // MAINWINDOW_H

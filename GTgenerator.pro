@@ -13,7 +13,8 @@ SOURCES += main.cpp\
         mainwindow.cpp\
         gtvideo.cpp \
         abnormalrange.cpp \
-    loadvideothread.cpp
+    loadvideothread.cpp \
+    window_addabnormalrange.cpp
 
 HEADERS  += mainwindow.h\
             gtvideo.h \
@@ -21,9 +22,11 @@ HEADERS  += mainwindow.h\
     abnormalrange.h \
     gtvideo.h \
     loadvideothread.h \
-    opencvheader.h
+    opencvheader.h \
+    window_addabnormalrange.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    window_addabnormalrange.ui
 
 INCLUDEPATH += /usr/local/include
 
