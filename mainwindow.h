@@ -8,6 +8,8 @@
 #include "gtvideo.h"
 #include "loadvideothread.h"
 
+class window_addAbnormalRange;
+
 namespace Ui {
     class MainWindow;
 }
@@ -20,6 +22,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    GTVideo* getGTVideo() const;
+
 private:
     void setupTimer(int interval, char method);
     void stopTimer();
@@ -30,6 +34,8 @@ private slots:
     void on_actionImages_triggered();
 
     void videoload_completed(bool result);
+
+    void open_window_addabnormalrange();
 
 
     //void on_horizontalSlider_sliderMoved(int position);
@@ -44,12 +50,17 @@ private slots:
 
     void on_actionAddBoundary_triggered();
 
+    void on_Button_prev_clicked();
+
 private:
     Ui::MainWindow *ui;
     GTVideo *gtv;                   // the data model and operations
     LoadVideoThread *videoloader;   // thread to load videos
 
     QTimer *timer;                  // timer for operation during video-loading and ...
+
+    window_addAbnormalRange  *newwindow_addAbnormalRange;
+
 };
 
 #endif // MAINWINDOW_H
