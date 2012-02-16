@@ -7,6 +7,7 @@
 #include <QDebug>
 
 #include "opencvheader.h"
+#include "window_addabnormalrange.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -23,10 +24,17 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+GTVideo* MainWindow::getGTVideo() const
+{
+    return gtv;
+}
+
 //to open window to addabnormalrange
 void MainWindow::open_window_addabnormalrange()
 {
     newwindow_addAbnormalRange = new window_addAbnormalRange();
+    newwindow_addAbnormalRange->setMainWindow(this);
+    newwindow_addAbnormalRange->setGTVideo(gtv);
     newwindow_addAbnormalRange->show();
 }
 
@@ -176,6 +184,29 @@ void MainWindow::videoload_completed(bool result)
 void MainWindow::on_Slider_videoloaded_sliderMoved(int position)
 {
     qDebug() << "slider is moved!\n";
+
+/*
+
+    if (NULL != gtv)
+    {
+        if(gtv->getFrameNumber()>0 && position>0 && position<=gtv->getFrameCount())
+        {
+            //ui->Slider_videoloaded->setMaximum(gtv->getFrameNumber());
+            cv::Mat frame_curr=gtv->retrieveFrame(position);
+            QImage img_curr= QImage((const unsigned char*)( frame_curr.data),
+                                    frame_curr.cols,frame_curr.rows,QImage::Format_RGB888);
+            ui->label_fcurr->setPixmap(QPixmap::fromImage(img_curr));
+            ui->label_fcurr->setScaledContents(true);
+            ui->label_fcurr->update();
+        }
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Please select video to load!");
+        msgBox.exec();
+    }
+*/
 }
 
 void MainWindow::on_Slider_videoloaded_sliderPressed()
@@ -186,42 +217,21 @@ void MainWindow::on_Slider_videoloaded_sliderPressed()
 
 void MainWindow::on_Slider_videoloaded_valueChanged(int value)
 {
-    qDebug() << QString("value is changed to: %1").arg(value);
 
-    //qDebug() << QString("number of frames loaded: %1").arg(gtv->getFrameNumber());
+    qDebug() << QString("value is changed to: %1").arg(value);
 
     if (NULL != gtv)
     {
-        if(gtv->getFrameNumber()>0)
+        if(gtv->getFrameNumber()>0 && value>0 && value<=gtv->getFrameCount())
         {
             //ui->Slider_videoloaded->setMaximum(gtv->getFrameNumber());
             cv::Mat frame_curr=gtv->retrieveFrame(value);
+            cv::imwrite("test.jpg",frame_curr);
             QImage img_curr= QImage((const unsigned char*)( frame_curr.data),
                                     frame_curr.cols,frame_curr.rows,QImage::Format_RGB888);
+
             ui->label_fcurr->setPixmap(QPixmap::fromImage(img_curr));
             ui->label_fcurr->setScaledContents(true);
-
-            /*
-            if(value>1)
-            {
-                cv::Mat frame_prev=gtv->retrieveFrame(value-1);
-                QImage img_prev= QImage((const unsigned char*)( frame_prev.data),
-                                        frame_prev.cols,frame_prev.rows,QImage::Format_RGB888);
-                ui->label_fprev->setPixmap(QPixmap::fromImage(img_prev));
-                ui->label_fprev->setScaledContents(true);
-
-
-            }
-            if(value<ui->Slider_videoloaded->maximum())
-            {
-                cv::Mat frame_next=gtv->retrieveFrame(value+1);
-                QImage img_next= QImage((const unsigned char*)( frame_next.data),
-                                        frame_next.cols,frame_next.rows,QImage::Format_RGB888);
-                ui->label_fnext->setPixmap(QPixmap::fromImage(img_next));
-                ui->label_fnext->setScaledContents(true);
-            }
-            */
-
         }
     }
     else
@@ -242,4 +252,11 @@ void MainWindow::on_Slider_videoloaded_sliderReleased()
 void MainWindow::on_actionAddBoundary_triggered()
 {
       open_window_addabnormalrange();
+
+}
+
+void MainWindow::on_Button_prev_clicked()
+{
+
+
 }
