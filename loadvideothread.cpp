@@ -46,24 +46,30 @@ void LoadVideoThread::loadFromVideo()
     else
     {
         gtv->setFrameCount((int)cap.get(CV_CAP_PROP_FRAME_COUNT));
-        cv::Mat frame; uint frameno = 0;
+        uint frameno = 0;
         for(;;)
         {
+            cv::Mat frame;
             cap >> frame;
             if (!frame.data)
             {
                 break;
             }
             frameno++;
+            cv::Mat rgbFrame;
+            cv::cvtColor(frame, rgbFrame, CV_BGR2RGB);
+
+            // save image to file
             QString filename = "";
             filename.sprintf("./source/%03d.tif", frameno);
-            bool retWrite = cv::imwrite(filename.toStdString(), frame);
+            bool retWrite = cv::imwrite(filename.toStdString(), rgbFrame);
             if (!retWrite)
             {
                 emit completeLoading(false);
                 break;
             }
-            gtv->appendFrame(frame);
+            // append it to data model
+            gtv->appendFrame(rgbFrame);
         }
         emit completeLoading(true);
         exit(0);
@@ -87,17 +93,19 @@ void LoadVideoThread::loadFromImages()
         while(it != listImages.end())
         {
             cv::Mat frame = cv::imread(it->filePath().toStdString());
+            cv::Mat rgbFrame;
+            cv::cvtColor(frame, rgbFrame, CV_BGR2RGB);
 
             frameno++;  QString filename = "";
             filename.sprintf("./source/%03d.tif", frameno);
-            bool retWrite = cv::imwrite(filename.toStdString(), frame);
+            bool retWrite = cv::imwrite(filename.toStdString(), rgbFrame);
             if (!retWrite)
             {
                 emit completeLoading(false);
                 break;
             }
 
-            gtv->appendFrame(frame);
+            gtv->appendFrame(rgbFrame);
             it++;
         }
         emit completeLoading(true);

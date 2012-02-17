@@ -53,13 +53,13 @@ void MainWindow::setupTimer(int interval, char method)
             return;
         }
         timer->start(interval);
-        qDebug() << QString("Timer ID=%1 started.").arg(timer->timerId());
+        //qDebug() << QString("Timer ID=%1 started.").arg(timer->timerId());
     }
 }
 
 void MainWindow::stopTimer()
 {
-    qDebug() << QString("Timer ID=%1 stopped.").arg(timer->timerId());
+    //qDebug() << QString("Timer ID=%1 stopped.").arg(timer->timerId());
     timer->stop();
 }
 
@@ -169,8 +169,8 @@ void MainWindow::videoload_completed(bool result)
 
         ui->Slider_videoloaded->setMaximum(gtv->getFrameCount());
         // since framecount is inacurate, so update it to 100% when loading finishes
-        ui->loadvideo_progressBar->setMaximum(gtv->getFrameCount());
-        ui->loadvideo_progressBar->setValue(gtv->getFrameNumber());
+        ui->loadvideo_progressBar->setMaximum(gtv->getFrameCount()-1);
+        ui->loadvideo_progressBar->setValue(gtv->getFrameNumber()-1);
         ui->loadvideo_progressBar->update();
 
         qDebug() << QString("Frames loaded: %1").arg(gtv->getFrameCount());
@@ -179,8 +179,6 @@ void MainWindow::videoload_completed(bool result)
 
 void MainWindow::on_Slider_videoloaded_sliderMoved(int position)
 {
-    qDebug() << "slider is moved!\n";
-
 /*
 
     if (NULL != gtv)
@@ -218,16 +216,17 @@ void MainWindow::on_Slider_videoloaded_valueChanged(int value)
 
     if (NULL != gtv)
     {
-        if(gtv->getFrameNumber()>0 && value>0 && value<=gtv->getFrameCount())
+        if(gtv->getFrameNumber()>0 && value>=0 && value<gtv->getFrameCount())
         {
             //ui->Slider_videoloaded->setMaximum(gtv->getFrameNumber());
             cv::Mat frame_curr=gtv->retrieveFrame(value);
-            cv::imwrite("test.jpg",frame_curr);
             QImage img_curr= QImage((const unsigned char*)( frame_curr.data),
                                     frame_curr.cols,frame_curr.rows,QImage::Format_RGB888);
 
             ui->label_fcurr->setPixmap(QPixmap::fromImage(img_curr));
             ui->label_fcurr->setScaledContents(true);
+
+            ui->label_fcurr->update();
         }
     }
     else

@@ -74,7 +74,7 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
     int sz = source.size();
     if (pos >= sz)
     {
-        qDebug() << "GTVideo::getFrame(int): Frame number out of bound (result unreliable).";
+        qDebug() << "GTVideo::retrieveFrame(int): Frame number out of bound (result unreliable).";
         return cv::Mat();
     }
     else
