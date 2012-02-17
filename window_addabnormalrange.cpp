@@ -39,6 +39,7 @@ void window_addAbnormalRange::on_pushButton_clicked()
 
 void window_addAbnormalRange::mousePressEvent(QMouseEvent *e)
 {
+
     if(e->buttons()==Qt::LeftButton)
     {
         QPoint ccur= QCursor::pos();
@@ -47,7 +48,6 @@ void window_addAbnormalRange::mousePressEvent(QMouseEvent *e)
         qDebug() << QString("clicked @ y=: %1").arg(c.y());
     }
 }
-
 
 void window_addAbnormalRange::on_lineEdit_start_returnPressed()
 {
@@ -63,3 +63,5 @@ void window_addAbnormalRange::on_spinBox_start_editingFinished()
     ui->label_frame->setScaledContents(true);
 
 }
+
+

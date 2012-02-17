@@ -171,9 +171,11 @@ void MainWindow::videoload_completed(bool result)
         // since framecount is inacurate, so update it to 100% when loading finishes
         ui->loadvideo_progressBar->setMaximum(gtv->getFrameCount());
         ui->loadvideo_progressBar->setValue(gtv->getFrameNumber());
+
         ui->loadvideo_progressBar->update();
 
         qDebug() << QString("Frames loaded: %1").arg(gtv->getFrameCount());
+
     }
 }
 

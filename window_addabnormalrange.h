@@ -20,6 +20,7 @@ public:
     ~window_addAbnormalRange();
     void setMainWindow(MainWindow* pMW);
     void setGTVideo(GTVideo* pGTV);
+
     
 private slots:
     void on_pushButton_clicked();
@@ -29,11 +30,14 @@ private slots:
     void on_spinBox_start_editingFinished();
 
 private:
+    virtual void mousePressEvent(QMouseEvent *e);//when mousePressEvent capture cursor coordinates with respect to
+                                                //certain widget
+private:
     MainWindow* pMainWindow;
     GTVideo* pGTVideo;
     Ui::window_addAbnormalRange *ui;
-    virtual void mousePressEvent(QMouseEvent *e);//when mousePressEvent capture cursor coordinates with respect to
-                                                //certain widget
+
+    QVector<cv::Point> ROI_Polygon;                // frames of the input video
 
 };
 
