@@ -78,21 +78,21 @@
      <item row="3" column="1">
       <widget class="QSpinBox" name="spinBox_end"/>
      </item>
-     <item row="0" column="2" colspan="3">
-      <widget class="QPushButton" name="pushButton_2">
+     <item row="0" column="3" colspan="2">
+      <widget class="QPushButton" name="pushButton_EditROI">
        <property name="text">
         <string>Edit ROI</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="2" colspan="3">
+     <item row="3" column="3" colspan="2">
       <widget class="QPushButton" name="pushButton">
        <property name="text">
         <string>Done</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="5">
+     <item row="4" column="1" colspan="3">
       <widget class="QLabel" name="label_frame">
        <property name="text">
         <string>TextLabel</string>

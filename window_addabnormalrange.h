@@ -6,6 +6,7 @@
 #include "gtvideo.h"
 
 class MainWindow;
+class roi_window;
 
 namespace Ui {
 class window_addAbnormalRange;
@@ -29,6 +30,12 @@ private slots:
 
     void on_spinBox_start_editingFinished();
 
+    void on_pushButton_2_clicked();
+
+    void on_pushButton_EditROI_clicked();
+
+    void open_roi_window();
+
 private:
     virtual void mousePressEvent(QMouseEvent *e);//when mousePressEvent capture cursor coordinates with respect to
                                                 //certain widget
@@ -36,6 +43,10 @@ private:
     MainWindow* pMainWindow;
     GTVideo* pGTVideo;
     Ui::window_addAbnormalRange *ui;
+
+    roi_window  *newroiwindow;
+
+    window_addAbnormalRange  *newwindow_addAbnormalRange;
 
     QVector<cv::Point> ROI_Polygon;                // frames of the input video
 

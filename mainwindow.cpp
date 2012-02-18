@@ -169,14 +169,9 @@ void MainWindow::videoload_completed(bool result)
 
         ui->Slider_videoloaded->setMaximum(gtv->getFrameCount());
         // since framecount is inacurate, so update it to 100% when loading finishes
-<<<<<<< HEAD
-        ui->loadvideo_progressBar->setMaximum(gtv->getFrameCount());
-        ui->loadvideo_progressBar->setValue(gtv->getFrameNumber());
 
-=======
         ui->loadvideo_progressBar->setMaximum(gtv->getFrameCount()-1);
         ui->loadvideo_progressBar->setValue(gtv->getFrameNumber()-1);
->>>>>>> 5435ea30076d58060e66a4852ecb6ff72dedd07b
         ui->loadvideo_progressBar->update();
 
         qDebug() << QString("Frames loaded: %1").arg(gtv->getFrameCount());
@@ -252,8 +247,16 @@ void MainWindow::on_Slider_videoloaded_sliderReleased()
 
 void MainWindow::on_actionAddBoundary_triggered()
 {
-      open_window_addabnormalrange();
-
+    if (NULL != gtv)
+    {
+    open_window_addabnormalrange();
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Please select video to load!");
+        msgBox.exec();
+    }
 }
 
 void MainWindow::on_Button_prev_clicked()

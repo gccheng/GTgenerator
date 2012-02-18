@@ -3,6 +3,7 @@
 
 #include "mainwindow.h"
 #include <QDebug>
+#include "roi_window.h"
 
 window_addAbnormalRange::window_addAbnormalRange(QWidget *parent) :
     QWidget(parent),
@@ -64,4 +65,20 @@ void window_addAbnormalRange::on_spinBox_start_editingFinished()
 
 }
 
+void window_addAbnormalRange::open_roi_window()
+{
+    newroiwindow= new roi_window();
 
+    newroiwindow->show();
+
+}
+
+void window_addAbnormalRange::on_pushButton_2_clicked()
+{
+
+}
+
+void window_addAbnormalRange::on_pushButton_EditROI_clicked()
+{
+    open_roi_window();
+}

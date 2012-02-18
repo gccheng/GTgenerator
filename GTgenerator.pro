@@ -14,7 +14,8 @@ SOURCES += main.cpp\
         gtvideo.cpp \
         abnormalrange.cpp \
     loadvideothread.cpp \
-    window_addabnormalrange.cpp
+    window_addabnormalrange.cpp \
+    roi_window.cpp
 
 HEADERS  += mainwindow.h\
             gtvideo.h \
@@ -23,10 +24,12 @@ HEADERS  += mainwindow.h\
     gtvideo.h \
     loadvideothread.h \
     opencvheader.h \
-    window_addabnormalrange.h
+    window_addabnormalrange.h \
+    roi_window.h
 
 FORMS    += mainwindow.ui \
-    window_addabnormalrange.ui
+    window_addabnormalrange.ui \
+    roi_window.ui
 
 INCLUDEPATH += /usr/local/include
 
