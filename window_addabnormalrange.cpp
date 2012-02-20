@@ -26,6 +26,8 @@ void window_addAbnormalRange::setMainWindow(MainWindow* pMW)
 void window_addAbnormalRange::setGTVideo(GTVideo *pGTV)
 {
     pGTVideo = pGTV;
+
+    ui->spinBox_id->setValue(pGTVideo->getAbnormallistsize()+1);
 }
 
 void window_addAbnormalRange::on_pushButton_clicked()
@@ -67,9 +69,22 @@ void window_addAbnormalRange::on_spinBox_start_editingFinished()
 
 void window_addAbnormalRange::open_roi_window()
 {
-    newroiwindow= new roi_window();
 
+    cv::Mat roi_ini=pGTVideo->retrieveFrame(0);
+    roi_ini.setTo(1);
+
+    //AbnormalRange newAbRange= new AbnormalRange(0,0,roi_ini);
+    //default start=0, end=0, ROI at default is the whole image
+    pAbRange = new AbnormalRange(0,0,roi_ini);
+    pAbRange->setStartEnd(uint(ui->spinBox_start->value()),uint(ui->spinBox_end->value()));
+    pAbRange->setROI(roi_ini);
+
+    //gtv->addAbnormalRange(*newAbRange);
+
+    newroiwindow= new roi_window();
+    newroiwindow->InitialSetUp(pGTVideo,pAbRange);
     newroiwindow->show();
+
 
 }
 
@@ -81,4 +96,6 @@ void window_addAbnormalRange::on_pushButton_2_clicked()
 void window_addAbnormalRange::on_pushButton_EditROI_clicked()
 {
     open_roi_window();
+
+
 }

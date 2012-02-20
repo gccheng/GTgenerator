@@ -64,6 +64,12 @@ int GTVideo::getFrameNumber() const
     return source.size();
 }
 
+int GTVideo::getAbnormallistsize()const
+{
+    return abnormallist.size();
+
+}
+
 const QVector<cv::Mat>& GTVideo::retrieveFrames() const
 {
     return source;

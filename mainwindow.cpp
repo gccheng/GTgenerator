@@ -29,7 +29,7 @@ GTVideo* MainWindow::getGTVideo() const
     return gtv;
 }
 
-//to open window to addabnormalrange
+//to open window to addabnormalrange with initial setup
 void MainWindow::open_window_addabnormalrange()
 {
     newwindow_addAbnormalRange = new window_addAbnormalRange();

@@ -35,6 +35,8 @@ public:
 
     int getFrameNumber() const;
     int getFrameCount() const;
+    int getAbnormallistsize() const;
+
     const cv::Mat& retrieveFrame(int pos) const;
     const QVector<cv::Mat>& retrieveFrames() const;
     const cv::Mat& retrieveGroundtruth(int pos) const;

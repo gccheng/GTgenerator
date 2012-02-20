@@ -48,7 +48,9 @@ private:
 
     window_addAbnormalRange  *newwindow_addAbnormalRange;
 
-    QVector<cv::Point> ROI_Polygon;                // frames of the input video
+    AbnormalRange* pAbRange;
+
+    //QVector<cv::Point> ROI_Polygon;
 
 };
 
