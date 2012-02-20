@@ -39,6 +39,11 @@ void GTVideo::addAbnormalRange(const AbnormalRange &ar)
     abnormallist.push_back(ar);
 }
 
+void GTVideo::updateAbnormalRange(const AbnormalRange &ar)
+{
+    abnormallist.pop_back();
+    abnormallist.push_back(ar);
+}
 
 void GTVideo::addGroundtruth(const cv::Mat &truth, int position)
 {

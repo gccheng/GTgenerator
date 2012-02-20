@@ -31,6 +31,7 @@ public:
     void setSource(const QVector<cv::Mat> &s);
     void appendFrame(const cv::Mat &f);
     void addAbnormalRange(const AbnormalRange &ar);
+    void updateAbnormalRange(const AbnormalRange &ar);
     void addGroundtruth(const cv::Mat &truth, int position = -1);
 
     int getFrameNumber() const;

@@ -73,7 +73,7 @@
       </widget>
      </item>
      <item row="4" column="3" colspan="2">
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="pushButton_done">
        <property name="text">
         <string>Done</string>
        </property>
@@ -92,7 +92,7 @@
     </layout>
    </item>
   </layout>
-  <zorder>pushButton</zorder>
+  <zorder>pushButton_done</zorder>
   <zorder>label_rangeID</zorder>
   <zorder>gridLayoutWidget</zorder>
  </widget>

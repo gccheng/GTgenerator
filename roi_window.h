@@ -18,8 +18,10 @@ class roi_window : public QDialog
 public:
     explicit roi_window(QWidget *parent = 0);
     ~roi_window();
-    void InitialSetUp(GTVideo *pGTV, AbnormalRange* pAbR);
-
+    void InitialSetUp();
+    void setGTVideo(GTVideo* pGTV);
+    void setAbRange(AbnormalRange* pAbR);
+    void setROIpolygonPointer(const cv::Point** pts,int* npts);
 private:
     virtual void mousePressEvent(QMouseEvent *e);//when mousePressEvent capture cursor coordinates with respect to
                                                 //certain widget
@@ -33,7 +35,10 @@ private:
 
     AbnormalRange* pAbRange;
 
-    QVector<QPoint> ROI_Polygon;
+    QVector<cv::Point> ROI_Polygon;
+
+    const cv::Point ** roipolygon_pts ;//array of pointer to roipolygon
+    int* roipolygon_npts;
 };
 
 #endif // ROI_WINDOW_H

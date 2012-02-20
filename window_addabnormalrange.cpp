@@ -28,18 +28,8 @@ void window_addAbnormalRange::setGTVideo(GTVideo *pGTV)
     pGTVideo = pGTV;
 
     ui->spinBox_id->setValue(pGTVideo->getAbnormallistsize()+1);
-}
-
-void window_addAbnormalRange::on_pushButton_clicked()
-{
-
-   qDebug() << "push button clicked";
-   int framecount= pMainWindow->getGTVideo()->getFrameCount();
-   qDebug() << QString("Frame count from mainwindow: %1").arg(framecount);
-
 
 }
-
 void window_addAbnormalRange::mousePressEvent(QMouseEvent *e)
 {
 
@@ -52,16 +42,20 @@ void window_addAbnormalRange::mousePressEvent(QMouseEvent *e)
     }
 }
 
-void window_addAbnormalRange::on_lineEdit_start_returnPressed()
-{
-
-}
-
 void window_addAbnormalRange::on_spinBox_start_editingFinished()
 {
-    int frame_id=ui->spinBox_start->value();
+    int frame_id = ui->spinBox_start->value();
     cv::Mat frame = pGTVideo->retrieveFrame(frame_id);
-    QImage img= QImage((const unsigned char*)( frame.data),frame.cols,frame.rows,QImage::Format_RGB888);
+
+    //to add contour of pAbRange
+    if (pGTVideo->getAbnormallistsize()>0)
+    {
+        if(pAbRange->getStart()==ui->spinBox_start->value())
+          {
+           cv::polylines(frame,roipolygon_pts,roipolygon_npts,1,1,cv::Scalar(255,255,255),8,0);
+          }
+    }
+    QImage img= QImage((const unsigned char*)(frame.data),frame.cols,frame.rows,QImage::Format_RGB888);
     ui->label_frame->setPixmap(QPixmap::fromImage(img));
     ui->label_frame->setScaledContents(true);
 
@@ -69,33 +63,47 @@ void window_addAbnormalRange::on_spinBox_start_editingFinished()
 
 void window_addAbnormalRange::open_roi_window()
 {
+    newroiwindow= new roi_window();
 
-    cv::Mat roi_ini=pGTVideo->retrieveFrame(0);
-    roi_ini.setTo(1);
+    cv::Mat roi_ini(pGTVideo->retrieveFrame(0).rows,pGTVideo->retrieveFrame(0).cols,CV_8UC1);
+    roi_ini.setTo(0);
 
-    //AbnormalRange newAbRange= new AbnormalRange(0,0,roi_ini);
+    //AbnormalRange newAbRange = new AbnormalRange(0,0,roi_ini);
     //default start=0, end=0, ROI at default is the whole image
+
     pAbRange = new AbnormalRange(0,0,roi_ini);
     pAbRange->setStartEnd(uint(ui->spinBox_start->value()),uint(ui->spinBox_end->value()));
     pAbRange->setROI(roi_ini);
 
-    //gtv->addAbnormalRange(*newAbRange);
-
-    newroiwindow= new roi_window();
-    newroiwindow->InitialSetUp(pGTVideo,pAbRange);
+    newroiwindow->setGTVideo(pGTVideo);
+    newroiwindow->setAbRange(pAbRange);
+    newroiwindow->setROIpolygonPointer(roipolygon_pts,roipolygon_npts);
+    newroiwindow->InitialSetUp();
     newroiwindow->show();
-
-
-}
-
-void window_addAbnormalRange::on_pushButton_2_clicked()
-{
-
 }
 
 void window_addAbnormalRange::on_pushButton_EditROI_clicked()
 {
     open_roi_window();
+}
 
+void window_addAbnormalRange::on_pushButton_done_clicked()
+{
+    pAbRange->setStartEnd(uint(ui->spinBox_start->value()),uint(ui->spinBox_end->value()));
+
+    if(ui->spinBox_id->value()==pGTVideo->getAbnormallistsize())
+    {
+      pGTVideo->updateAbnormalRange(*pAbRange);
+    }
+    else
+    {
+      pGTVideo->addAbnormalRange(*pAbRange);
+    }
+
+    newroiwindow->close();
+}
+
+void window_addAbnormalRange::on_spinBox_id_valueChanged(int arg1)
+{
 
 }

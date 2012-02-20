@@ -181,28 +181,7 @@ void MainWindow::videoload_completed(bool result)
 
 void MainWindow::on_Slider_videoloaded_sliderMoved(int position)
 {
-/*
 
-    if (NULL != gtv)
-    {
-        if(gtv->getFrameNumber()>0 && position>0 && position<=gtv->getFrameCount())
-        {
-            //ui->Slider_videoloaded->setMaximum(gtv->getFrameNumber());
-            cv::Mat frame_curr=gtv->retrieveFrame(position);
-            QImage img_curr= QImage((const unsigned char*)( frame_curr.data),
-                                    frame_curr.cols,frame_curr.rows,QImage::Format_RGB888);
-            ui->label_fcurr->setPixmap(QPixmap::fromImage(img_curr));
-            ui->label_fcurr->setScaledContents(true);
-            ui->label_fcurr->update();
-        }
-    }
-    else
-    {
-        QMessageBox msgBox;
-        msgBox.setText("Please select video to load!");
-        msgBox.exec();
-    }
-*/
 }
 
 void MainWindow::on_Slider_videoloaded_sliderPressed()

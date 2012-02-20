@@ -45,3 +45,5 @@ uint AbnormalRange::getEnd() const
 {
     return end;
 }
+
+

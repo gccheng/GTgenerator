@@ -24,17 +24,19 @@ public:
 
     
 private slots:
-    void on_pushButton_clicked();
+  //  void on_pushButton_clicked();
 
-    void on_lineEdit_start_returnPressed();
+//    void on_lineEdit_start_returnPressed();
 
     void on_spinBox_start_editingFinished();
 
-    void on_pushButton_2_clicked();
+//    void on_pushButton_2_clicked();
 
     void on_pushButton_EditROI_clicked();
 
     void open_roi_window();
+
+    void on_pushButton_done_clicked();
 
 private:
     virtual void mousePressEvent(QMouseEvent *e);//when mousePressEvent capture cursor coordinates with respect to
@@ -50,7 +52,8 @@ private:
 
     AbnormalRange* pAbRange;
 
-    //QVector<cv::Point> ROI_Polygon;
+    const cv::Point ** roipolygon_pts;//array of pointer to roipolygon
+    int* roipolygon_npts;
 
 };
 
