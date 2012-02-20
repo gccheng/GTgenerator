@@ -8,7 +8,7 @@
 #include "opencvheader.h"
 
 LoadVideoThread::LoadVideoThread(const QString &path, SourceType t, GTVideo *v, QThread *parent) :
-    filePath(path), type(t), gtv(v), QThread(parent)
+    QThread(parent), type(t), filePath(path), gtv(v)
 {
     moveToThread(this);
 }

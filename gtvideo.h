@@ -18,6 +18,7 @@
 #include "abnormalrange.h"
 
 enum SourceType {VIDEO = 1, IMAGES = 2};
+enum TrackType {SNAKE = 1};
 
 class GTVideo : public QObject
 {
@@ -32,6 +33,7 @@ public:
     void appendFrame(const cv::Mat &f);
     void addAbnormalRange(const AbnormalRange &ar);
     void addGroundtruth(const cv::Mat &truth, int position = -1);
+    void setGroundtruth(const cv::Mat &truth, int position);
 
     int getFrameNumber() const;
     int getFrameCount() const;
@@ -43,7 +45,10 @@ public:
     const QVector<cv::Mat>& retrieveGroundtruth() const;
 
 public:
-    void generateGroundtruth();     // generate groundtruth through tracking
+    void generateGroundtruth(TrackType tracktype);      // generate groundtruth through tracking
+
+private:
+    void snakeTracking();                               // tracking using snake image
 
 private:
     QVector<cv::Mat> source;                // frames of the input video
@@ -54,6 +59,7 @@ private:
     QString filePath;               // source file path
     int frameCount;                 // total number of frames in the video (maybe VERY inaccurate before
                                     // the video is completely loaded
+    TrackType trackType;            // method for tracking
 };
 
 #endif // GTVIDEO_H
