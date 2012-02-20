@@ -1,6 +1,8 @@
 #include "gtvideo.h"
 #include <QDebug>
 
+#include <opencv2/legacy/legacy.hpp>
+
 GTVideo::GTVideo(QObject *parent) :
     QObject(parent)
 {
@@ -63,6 +65,19 @@ void GTVideo::addGroundtruth(const cv::Mat &truth, int position)
     grdtruth.insert(it, truth);
 }
 
+void GTVideo::setGroundtruth(const cv::Mat &truth, int position)
+{
+    if ((position>=grdtruth.size()) || (position<0))
+    {
+        return;
+    }
+    else
+    {
+        grdtruth[position] = truth;
+    }
+
+}
+
 // get the number of currently loaded frames
 int GTVideo::getFrameNumber() const
 {
@@ -113,7 +128,65 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
     return grdtruth;
  }
 
- void GTVideo::generateGroundtruth()
+ // generator the abnormal results through tracking
+ void GTVideo::generateGroundtruth(TrackType tracktype)
  {
+     switch (tracktype)
+     {
+     case SNAKE:
+         snakeTracking();
+     }
+ }
 
+ void GTVideo::snakeTracking()
+ {
+     if(source.isEmpty() || abnormallist.isEmpty())
+     {
+         qDebug() << "Video source and initial abnormal range must be set before tracking\n";
+         return;
+     }
+
+     //initialize the groundtruth
+     cv::Mat eye = source.at(0);
+     eye.setTo(cv::Scalar(0)); //cv::Scalar(0,0,0)
+     grdtruth.fill(eye);
+
+     for (int iAb=0; iAb<abnormallist.size(); iAb++)
+     {
+         uint start = abnormallist[iAb].getStart();
+         uint end = abnormallist[iAb].getEnd();
+         int length = end-start+1;
+         const QVector<cv::Point>& boundaryPoints = abnormallist[iAb].getBoundaryPoints();
+         std::vector<cv::Point> stdBoundPoints = boundaryPoints.toStdVector();
+
+         // consctruct a new array of type CvPoint because it will be modified for each frame
+         const int npts = boundaryPoints.size();
+         CvPoint pts_snake[npts];
+         for (int i=0; i<npts; i++)
+         {
+             pts_snake[i] = boundaryPoints[i];
+         }
+
+         // set parameters for cvSnakeImage()
+         float alpha = 0.2f;
+         float beta = 0.2f;
+         float gamma = 0.2f;
+         int coeff_usage = CV_VALUE;
+         cv::Size win(5,5);
+         cv::TermCriteria criteria(CV_TERMCRIT_ITER, 100, 0.1);
+
+         // set tracked object as abnormal ROI
+         for (uint iFrame=start; iFrame<=end; iFrame++)
+         {
+             IplImage ipFrame = source[iFrame];
+             cvSnakeImage(&ipFrame, pts_snake, length, &alpha, &beta, &gamma, coeff_usage, win, criteria, 1);
+
+             cv::Mat roi = source[iFrame];
+             roi.setTo(cv::Scalar(0)); //cv::Scalar(0,0,0)
+
+             cv::fillPoly(roi, stdBoundPoints, cv::Scalar(0)); //cv::Scalar(255,255,255)
+             abnormallist[iAb].setROI(roi);
+             setGroundtruth(roi, iFrame);
+         }
+     }
  }

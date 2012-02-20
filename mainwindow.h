@@ -52,6 +52,8 @@ private slots:
 
     void on_Button_prev_clicked();
 
+    void on_actionGroundtruth_2_triggered();
+
 private:
     Ui::MainWindow *ui;
     GTVideo *gtv;                   // the data model and operations

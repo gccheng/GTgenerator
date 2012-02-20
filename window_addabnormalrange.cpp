@@ -100,7 +100,6 @@ void window_addAbnormalRange::on_pushButton_done_clicked()
       pGTVideo->addAbnormalRange(*pAbRange);
     }
 
-    newroiwindow->close();
 }
 
 void window_addAbnormalRange::on_spinBox_id_valueChanged(int arg1)

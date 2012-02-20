@@ -55,6 +55,9 @@
      </item>
      <item row="3" column="2">
       <widget class="QSlider" name="Slider_videoloaded">
+       <property name="toolTip">
+        <string extracomment="jjj"/>
+       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>

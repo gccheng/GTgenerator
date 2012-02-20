@@ -38,6 +38,8 @@ private slots:
 
     void on_pushButton_done_clicked();
 
+    void on_spinBox_id_valueChanged(int arg1);
+
 private:
     virtual void mousePressEvent(QMouseEvent *e);//when mousePressEvent capture cursor coordinates with respect to
                                                 //certain widget

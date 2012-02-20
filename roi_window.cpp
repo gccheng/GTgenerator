@@ -99,5 +99,6 @@ void roi_window::mouseDoubleClickEvent(QMouseEvent *e)
     int npts=ROI_Polygon.size();
     cv::fillPoly(roi_img,roipolygon_pts,&npts,1,cv::Scalar(255,255,255),8,0);
     pAbRange->setROI(roi_img);
+    pAbRange->setBoundaryPoints(ROI_Polygon);
     }
 }
