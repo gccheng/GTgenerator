@@ -1,5 +1,7 @@
 #include "abnormalrange.h"
 
+#include <QDebug>
+
 AbnormalRange::AbnormalRange(QObject *parent) :
     QObject(parent), start(0), end(0)
 {
@@ -15,6 +17,7 @@ AbnormalRange::AbnormalRange(const AbnormalRange &ar):QObject()
     start = ar.start;
     end = ar.end;
     roi = ar.roi;
+    boundarypoints = ar.boundarypoints;
 }
 
 AbnormalRange& AbnormalRange::operator=(const AbnormalRange & ar)
@@ -22,6 +25,7 @@ AbnormalRange& AbnormalRange::operator=(const AbnormalRange & ar)
     start = ar.start;
     end = ar.end;
     roi = ar.roi;
+    boundarypoints = ar.boundarypoints;
     return (*this);
 }
 

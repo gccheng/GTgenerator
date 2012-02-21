@@ -247,8 +247,6 @@ void MainWindow::on_Button_prev_clicked()
 void MainWindow::on_actionGroundtruth_2_triggered()
 {
     ///--->test
-    AbnormalRange ar;
-    gtv->addAbnormalRange(ar);
     gtv->generateGroundtruth(SNAKE);
     ///<---test
 }
