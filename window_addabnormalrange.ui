@@ -63,7 +63,11 @@
       </widget>
      </item>
      <item row="4" column="1">
-      <widget class="QSpinBox" name="spinBox_end"/>
+      <widget class="QSpinBox" name="spinBox_end">
+       <property name="maximum">
+        <number>999999999</number>
+       </property>
+      </widget>
      </item>
      <item row="0" column="3" colspan="2">
       <widget class="QPushButton" name="pushButton_EditROI">
@@ -92,9 +96,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>pushButton_done</zorder>
-  <zorder>label_rangeID</zorder>
-  <zorder>gridLayoutWidget</zorder>
  </widget>
  <resources/>
  <connections/>

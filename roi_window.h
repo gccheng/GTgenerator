@@ -21,7 +21,10 @@ public:
     void InitialSetUp();
     void setGTVideo(GTVideo* pGTV);
     void setAbRange(AbnormalRange* pAbR);
+
     void setROIpolygonPointer(const cv::Point** pts,int* npts);
+
+    cv::Mat frame_roi;
 private:
     virtual void mousePressEvent(QMouseEvent *e);//when mousePressEvent capture cursor coordinates with respect to
                                                 //certain widget
@@ -39,6 +42,8 @@ private:
 
     const cv::Point ** roipolygon_pts ;//array of pointer to roipolygon
     int* roipolygon_npts;
+
+
 };
 
 #endif // ROI_WINDOW_H
