@@ -21,11 +21,10 @@ roi_window::~roi_window()
 void roi_window::InitialSetUp()
 {
     int pos = pAbRange->getStart();
-    cv::Mat frame_roi = pGTVideo->retrieveFrame(pos);
+    frame_roi = pGTVideo->retrieveFrame(pos).clone();//set frame_roi for displaying manual input
     QImage img_roi= QImage((const unsigned char*)(frame_roi.data),frame_roi.cols,frame_roi.rows,QImage::Format_RGB888);
     ui->label_roi->setPixmap(QPixmap::fromImage(img_roi));
     ui->label_roi->setScaledContents(true);
-
 }
 
 void roi_window::setGTVideo(GTVideo* pGTV)
@@ -51,8 +50,7 @@ void roi_window::mousePressEvent(QMouseEvent *e)
         cv::Point pt2=cv::Point(0,0);
 
         int pos = pAbRange->getStart();
-        cv::Mat frame_roi = pGTVideo->retrieveFrame(pos);
-
+        //cv::Mat frame_roi = pGTVideo->retrieveFrame(pos).clone();
         QPoint ccur= QCursor::pos();
         QPoint c = ui->label_roi->mapFromGlobal(ccur);
 
@@ -97,6 +95,8 @@ void roi_window::mouseDoubleClickEvent(QMouseEvent *e)
     //const cv::Point ** pts = &p;
     roipolygon_pts = &p;
     int npts=ROI_Polygon.size();
+    roipolygon_npts = new int;
+    *roipolygon_npts = npts;
     cv::fillPoly(roi_img,roipolygon_pts,&npts,1,cv::Scalar(255,255,255),8,0);
     pAbRange->setROI(roi_img);
     pAbRange->setBoundaryPoints(ROI_Polygon);

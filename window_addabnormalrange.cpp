@@ -45,8 +45,8 @@ void window_addAbnormalRange::mousePressEvent(QMouseEvent *e)
 void window_addAbnormalRange::on_spinBox_start_editingFinished()
 {
     int frame_id = ui->spinBox_start->value();
-    cv::Mat frame = pGTVideo->retrieveFrame(frame_id);
-
+    cv::Mat frame = pGTVideo->retrieveFrame(frame_id).clone();
+    QImage img;
     //to add contour of pAbRange
     if (pGTVideo->getAbnormallistsize()>0)
     {
@@ -55,7 +55,23 @@ void window_addAbnormalRange::on_spinBox_start_editingFinished()
            cv::polylines(frame,roipolygon_pts,roipolygon_npts,1,1,cv::Scalar(255,255,255),8,0);
           }
     }
-    QImage img= QImage((const unsigned char*)(frame.data),frame.cols,frame.rows,QImage::Format_RGB888);
+    else
+    {
+        //when roi has just been edited
+       // if(NULL!=newroiwindow->frame_roi)
+        //{
+
+         //pAbRange->getBoundaryPoints().data();
+         //cv::polylines(frame,roipolygon_pts,roipolygon_npts,1,1,cv::Scalar(255,255,255),8,0);
+          //img= QImage((const unsigned char*)(newroiwindow->frame_roi.data),(newroiwindow->frame_roi.cols,newroiwindow->frame_roi.rows,QImage::Format_RGB888);
+          //img= QImage((const unsigned char*)(frame.data),frame.cols,frame.rows,QImage::Format_RGB888);
+       // }
+       // else
+       // {
+          img= QImage((const unsigned char*)(frame.data),frame.cols,frame.rows,QImage::Format_RGB888);
+       // }
+    }
+
     ui->label_frame->setPixmap(QPixmap::fromImage(img));
     ui->label_frame->setScaledContents(true);
 
@@ -81,6 +97,8 @@ void window_addAbnormalRange::open_roi_window()
     newroiwindow->InitialSetUp();
     newroiwindow->show();
 }
+
+
 
 void window_addAbnormalRange::on_pushButton_EditROI_clicked()
 {
