@@ -157,7 +157,6 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
          uint end = abnormallist[iAb].getEnd();
          int length = end-start+1;
          const QVector<cv::Point>& boundaryPoints = abnormallist[iAb].getBoundaryPoints();
-         std::vector<cv::Point> stdBoundPoints = boundaryPoints.toStdVector();
 
          // consctruct a new array of type CvPoint because it will be modified for each frame
          const int npts = boundaryPoints.size();
@@ -172,21 +171,43 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
          float beta = 0.2f;
          float gamma = 0.2f;
          int coeff_usage = CV_VALUE;
-         cv::Size win(5,5);
-         cv::TermCriteria criteria(CV_TERMCRIT_ITER, 100, 0.1);
+         CvSize win = cvSize(5,5);
+         CvTermCriteria criteria = cvTermCriteria(CV_TERMCRIT_ITER, 100, 0.1);
 
          // set tracked object as abnormal ROI
          for (uint iFrame=start; iFrame<=end; iFrame++)
          {
-             IplImage ipFrame = source[iFrame];
-             cvSnakeImage(&ipFrame, pts_snake, length, &alpha, &beta, &gamma, coeff_usage, win, criteria, 1);
+             // update boundary using that in previous frame
+             cv::Mat grayFrame;
+             cv::cvtColor(source[iFrame], grayFrame, CV_RGB2GRAY);
+             IplImage *ipFrame = new IplImage(grayFrame);
+             cvSnakeImage(ipFrame, pts_snake, npts, &alpha, &beta, &gamma, coeff_usage, win, criteria, 1);
 
-             cv::Mat roi = source[iFrame];
+             cvSaveImage("frame.tif", ipFrame);
+
+             // convert boundary points from CvPoint[] to vector<Point>
+             std::vector<cv::Point> stdBoundPoints;
+             for (int i=0; i<npts; i++)
+             {
+                 cv::Point p(pts_snake[i].x, pts_snake[i].y);
+                 stdBoundPoints.push_back(p);
+             }
+
+             // fill the empty grayFrame using popygon to get roi
+             cv::Mat roi;
+             cv::cvtColor(source[iFrame], roi, CV_RGB2GRAY);
              roi.setTo(cv::Scalar(0)); //cv::Scalar(0,0,0)
+             //cv::fillPoly(roi, stdBoundPoints, cv::Scalar(0)); //cv::Scalar(255,255,255)
+             const cv::Point *pAddBoundary = stdBoundPoints.data();
+             const cv::Point **pBoundaryPoints = &pAddBoundary;
+             cv::fillPoly(roi, pBoundaryPoints, &npts, 1, cv::Scalar(255));  //cv::Scalar(255,255,255)
 
-             cv::fillPoly(roi, stdBoundPoints, cv::Scalar(0)); //cv::Scalar(255,255,255)
              abnormallist[iAb].setROI(roi);
              setGroundtruth(roi, iFrame);
+
+             delete ipFrame;
+
+             cv::imwrite("output.tif", roi);
          }
      }
  }
