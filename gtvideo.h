@@ -47,6 +47,7 @@ public:
 
 public:
     void generateGroundtruth(TrackType tracktype);      // generate groundtruth through tracking
+    void subtractBackground(const cv::Mat& bkgd);       // subtract background image from source to get foreground mask
 
 private:
     void snakeTracking();                               // tracking using snake image
@@ -54,6 +55,7 @@ private:
 private:
     QVector<cv::Mat> source;                // frames of the input video
     QVector<cv::Mat> grdtruth;              // the generated groundtruth
+    QVector<cv::Mat> foregroundMask;        // foreground
     QVector<AbnormalRange> abnormallist;    // where anomaly starts/ends
 
     SourceType type;                // data source type

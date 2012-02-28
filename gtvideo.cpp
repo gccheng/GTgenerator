@@ -167,12 +167,12 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
          }
 
          // set parameters for cvSnakeImage()
-         float alpha = 0.2f;
-         float beta = 0.2f;
-         float gamma = 0.2f;
+         float alpha = 0.5f;
+         float beta = 0.5f;
+         float gamma = 0.5f;
          int coeff_usage = CV_VALUE;
-         CvSize win = cvSize(5,5);
-         CvTermCriteria criteria = cvTermCriteria(CV_TERMCRIT_ITER, 100, 0.1);
+         CvSize win = cvSize(21,21);
+         CvTermCriteria criteria = cvTermCriteria(CV_TERMCRIT_ITER, 100, 0.5);
 
          // set tracked object as abnormal ROI
          for (uint iFrame=start; iFrame<=end; iFrame++)
@@ -210,4 +210,9 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
              cv::imwrite("output.tif", roi);
          }
      }
+ }
+
+ void GTVideo::subtractBackground(const cv::Mat& bkgd)
+ {
+
  }
