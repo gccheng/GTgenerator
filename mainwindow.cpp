@@ -1,3 +1,4 @@
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -175,6 +176,18 @@ void MainWindow::videoload_completed(bool result)
         ui->loadvideo_progressBar->update();
 
         qDebug() << QString("Frames loaded: %1").arg(gtv->getFrameCount());
+
+        //to generate background image of the loaded video
+        gtv->setBackground();
+        gtv->estimateBackground();
+
+
+
+        //to substract backgroud to get foregroundmask for every frame
+        gtv->setForegroundMask();
+
+
+
 
     }
 }
