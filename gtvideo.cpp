@@ -134,7 +134,7 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
      switch (tracktype)
      {
      case SNAKE:
-         snakeTracking();
+         snakeTracking2();
      }
  }
 
@@ -210,6 +210,131 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
              cv::imwrite("output.tif", roi);
          }
      }
+ }
+
+ void GTVideo::snakeTracking2()
+ {
+     if(source.isEmpty() || abnormallist.isEmpty())
+     {
+         qDebug() << "Video source and initial abnormal range must be set before tracking\n";
+         return;
+     }
+
+     //initialize the groundtruth
+     cv::Mat eye = source.at(0);
+     eye.setTo(cv::Scalar(0)); //cv::Scalar(0,0,0)
+     grdtruth.fill(eye);
+
+     for (int iAb=0; iAb<abnormallist.size(); iAb++)
+     {
+         uint start = abnormallist[iAb].getStart();
+         uint end = abnormallist[iAb].getEnd();
+         int length = end-start+1;
+         const QVector<cv::Point>& boundaryPoints = abnormallist[iAb].getBoundaryPoints();
+         const int npts = boundaryPoints.size();
+         const cv::Point *pAddBoundary = boundaryPoints.data();
+         const cv::Point **pBoundaryPoints = &pAddBoundary;
+
+         // initialize the segmentation mask
+         cv::Mat initmask;
+         cv::cvtColor(source[0], initmask, CV_RGB2GRAY);
+         initmask.setTo(cv::Scalar(0));
+         cv::fillPoly(initmask, pBoundaryPoints, &npts, 1, cv::Scalar(255));
+
+         // set tracked object as abnormal ROI
+         for (uint iFrame=start; iFrame<=end; iFrame++)
+         {
+             // update boundary using that in previous frame
+             cv::Mat grayFrame;
+             cv::cvtColor(source[iFrame], grayFrame, CV_RGB2GRAY);
+
+             cv::Mat resultImage = segmentByActiveContour(grayFrame, initmask, 250, false);
+             initmask = resultImage;
+
+             cv::imwrite("frame.tif", grayFrame);
+             cv::imwrite("result.tif", resultImage);
+         }
+     }
+ }
+
+ cv::Mat GTVideo::segmentByActiveContour(const cv::Mat& aSrc, const cv::Mat& aInitMask, int aMaxIts, bool aDisp)
+ {
+     if (NULL == aSrc.data)
+     {
+         std::cerr << "Could not load the image."
+                   <<  std::endl;
+         return cv::Mat();
+     }
+
+     // Initialize the MATLAB Compiler Runtime global state
+     if (!mclInitializeApplication(NULL,0))
+     {
+         std::cerr << "Could not initialize the application properly."
+                   <<  std::endl;
+         return cv::Mat();
+     }
+
+     // Initialize the segmentation library
+     if (!libsegInitialize())
+     {
+         std::cerr << "Could not initialize the library properly."
+                   << std::endl;
+         return cv::Mat();
+     }
+
+     const int rows = aSrc.rows;
+     const int cols = aSrc.cols;
+
+     // set input parameters to the shared object libseg.so
+     // source image (Note: matlab is column-major while C++ is row-major
+     cv::Mat trImage;
+     cv::transpose(aSrc, trImage);
+     mwArray I(rows, cols, mxUINT8_CLASS);
+     I.SetData(trImage.data, rows*cols);
+
+     // maximum iteration number
+     int maxits[1] = {aMaxIts};
+     mwArray max_its(1,1,  mxINT32_CLASS);//mxUINT8_CLASS);
+     max_its.SetData(maxits, 1);
+
+     // initial mask of segmentation
+     cv::Mat initmask = aInitMask.clone();
+     mwArray init_mask(rows, cols, mxUINT8_CLASS);
+     init_mask.SetData(initmask.data, rows*cols);
+
+     // parameter alpha to the active contour method
+     double alph[1] = {0.2};
+     mwArray alpha(1,1, mxDOUBLE_CLASS);
+     alpha.SetData(alph, 1);
+
+     // display intermediate results or not
+     uchar disp[1] = {aDisp?1:0};
+     mwArray display(1,1, mxUINT8_CLASS);
+     display.SetData(disp, 1);
+
+     // return value container
+     mwArray imOutput(rows, cols, mxUINT8_CLASS);
+     region_seg(1, imOutput, I, init_mask, max_its, alpha, display);
+
+     // retrieve result to cv::Mat format
+     uchar result[rows*cols];
+     imOutput.GetData(result, rows*cols);
+     //mxClassID classid = imOutput.ClassID();
+     //mwSize nDim = imOutput.NumberOfDimensions();
+     //const mwArray dims = imOutput.GetDimensions();
+     cv::Mat retImage(rows, cols, CV_8UC1);
+     for (int j=0; j<cols; j++)
+     {
+         for (int i=0; i<rows; i++)
+         {
+             retImage.at<uchar>(i,j) = result[j*rows+i];
+         }
+     }
+
+      mclTerminateApplication();
+      libsegTerminate();
+
+      return retImage;
  }
 
  void GTVideo::subtractBackground(const cv::Mat& bkgd)

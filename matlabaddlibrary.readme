@@ -1,0 +1,6 @@
+LD_LIBRARY_PATH=/home/cheng/Documents/Programming/CVOpenCV/MatlabExptC/MatlabCCode:/opt/MATLAB/MATLAB_Compiler_Runtime/v715/sys/os/glnx86:/opt/MATLAB/MATLAB_Compiler_Runtime/v715/sys/java/jre/glnx86/jre/lib/i386/native_threads:/opt/MATLAB/MATLAB_Compiler_Runtime/v715/sys/java/jre/glnx86/jre/lib/i386/server:/opt/MATLAB/MATLAB_Compiler_Runtime/v715/sys/java/jre/glnx86/jre/lib/i386:${LD_LIBRARY_PATH}
+
+./../GTgenerator:/opt/MATLAB/MATLAB_Compiler_Runtime/v715/sys/os/glnx86:/opt/MATLAB/MATLAB_Compiler_Runtime/v715/sys/java/jre/glnx86/jre/lib/i386/native_threads:/opt/MATLAB/MATLAB_Compiler_Runtime/v715/sys/java/jre/glnx86/jre/lib/i386/server:/opt/MATLAB/MATLAB_Compiler_Runtime/v715/sys/java/jre/glnx86/jre/lib/i386:${LD_LIBRARY_PATH}
+
+XAPPLRESDIR = 
+/opt/MATLAB/MATLAB_Compiler_Runtime/v715/X11/app-defaults

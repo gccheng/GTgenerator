@@ -16,6 +16,7 @@
 #include "opencvheader.h"
 
 #include "abnormalrange.h"
+#include "libseg.h"
 
 enum SourceType {VIDEO = 1, IMAGES = 2};
 enum TrackType {SNAKE = 1};
@@ -51,6 +52,8 @@ public:
 
 private:
     void snakeTracking();                               // tracking using snake image
+    void snakeTracking2();                              // a better implementation of snake tracking
+    cv::Mat segmentByActiveContour(const cv::Mat& aSrc, const cv::Mat& aInitMask, int aMaxIts, bool aDisp);
 
 private:
     QVector<cv::Mat> source;                // frames of the input video

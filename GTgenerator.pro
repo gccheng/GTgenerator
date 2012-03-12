@@ -25,12 +25,17 @@ HEADERS  += mainwindow.h\
     loadvideothread.h \
     opencvheader.h \
     window_addabnormalrange.h \
-    roi_window.h
+    roi_window.h \
+    libseg.h
 
 FORMS    += mainwindow.ui \
     window_addabnormalrange.ui \
     roi_window.ui
 
 INCLUDEPATH += /usr/local/include
+INCLUDEPATH += /usr/local/MATLAB/R2011a/extern/include
 
 LIBS += -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_features2d -lopencv_legacy
+LIBS += -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_features2d -lopencv_legacy
+LIBS += -L/opt/MATLAB/MATLAB_Compiler_Runtime/v715/runtime/glnx86 -lmwmclmcrrt
+LIBS += -L/home/cheng/Documents/Programming/CVOpenCV/MatlabExptC/MatlabCCode -lseg
