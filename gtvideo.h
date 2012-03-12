@@ -36,6 +36,7 @@ public:
     void addGroundtruth(const cv::Mat &truth, int position = -1);
     void setGroundtruth(const cv::Mat &truth, int position);
 
+
     int getFrameNumber() const;
     int getFrameCount() const;
     int getAbnormallistsize() const;
@@ -47,7 +48,12 @@ public:
 
 public:
     void generateGroundtruth(TrackType tracktype);      // generate groundtruth through tracking
-    void subtractBackground(const cv::Mat& bkgd);       // subtract background image from source to get foreground mask
+    void setBackground();
+    void setForegroundMask(); //set foreground for all the video frames
+    void estimateBackground();
+    void subtractBackground(cv::Mat& foreground_mask,const cv::Mat& frame_cur); // subtract background image from source to get foreground mask
+    //void _setForeground(cv::Mat& foregroudmask,const cv::Mat& bkgd);
+    uchar quick_select(uchar* arr, int n); //quicksort for median value of the arr
 
 private:
     void snakeTracking();                               // tracking using snake image
@@ -57,6 +63,8 @@ private:
     QVector<cv::Mat> grdtruth;              // the generated groundtruth
     QVector<cv::Mat> foregroundMask;        // foreground
     QVector<AbnormalRange> abnormallist;    // where anomaly starts/ends
+
+    cv::Mat background; //background image in RGB
 
     SourceType type;                // data source type
     QString filePath;               // source file path

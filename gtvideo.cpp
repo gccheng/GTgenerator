@@ -1,5 +1,6 @@
 #include "gtvideo.h"
 #include <QDebug>
+#include <QtCore/qmath.h>
 
 #include <opencv2/legacy/legacy.hpp>
 
@@ -25,6 +26,7 @@ int GTVideo::getFrameCount() const
 {
     return frameCount;
 }
+
 
 void GTVideo::setSource(const QVector<cv::Mat> &s)
 {
@@ -140,14 +142,14 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
 
  void GTVideo::snakeTracking()
  {
-     if(source.isEmpty() || abnormallist.isEmpty())
+     if(foregroundMask.isEmpty() || abnormallist.isEmpty())
      {
          qDebug() << "Video source and initial abnormal range must be set before tracking\n";
          return;
      }
 
      //initialize the groundtruth
-     cv::Mat eye = source.at(0);
+     cv::Mat eye = foregroundMask.at(0);
      eye.setTo(cv::Scalar(0)); //cv::Scalar(0,0,0)
      grdtruth.fill(eye);
 
@@ -178,12 +180,13 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
          for (uint iFrame=start; iFrame<=end; iFrame++)
          {
              // update boundary using that in previous frame
-             cv::Mat grayFrame;
-             cv::cvtColor(source[iFrame], grayFrame, CV_RGB2GRAY);
+             cv::Mat grayFrame(foregroundMask[iFrame]);
+             //cv::cvtColor(foregroundMask[iFrame], grayFrame, CV_RGB2GRAY);
              IplImage *ipFrame = new IplImage(grayFrame);
              cvSnakeImage(ipFrame, pts_snake, npts, &alpha, &beta, &gamma, coeff_usage, win, criteria, 1);
 
              cvSaveImage("frame.tif", ipFrame);
+
 
              // convert boundary points from CvPoint[] to vector<Point>
              std::vector<cv::Point> stdBoundPoints;
@@ -194,8 +197,8 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
              }
 
              // fill the empty grayFrame using popygon to get roi
-             cv::Mat roi;
-             cv::cvtColor(source[iFrame], roi, CV_RGB2GRAY);
+             cv::Mat roi(foregroundMask[iFrame]);
+             //cv::cvtColor(foregroundMask[iFrame], roi, CV_RGB2GRAY);
              roi.setTo(cv::Scalar(0)); //cv::Scalar(0,0,0)
              //cv::fillPoly(roi, stdBoundPoints, cv::Scalar(0)); //cv::Scalar(255,255,255)
              const cv::Point *pAddBoundary = stdBoundPoints.data();
@@ -207,12 +210,163 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
 
              delete ipFrame;
 
+
              cv::imwrite("output.tif", roi);
          }
      }
  }
-
- void GTVideo::subtractBackground(const cv::Mat& bkgd)
+ void GTVideo::setBackground()
  {
+     background = source.at(0).clone();
+ }
+ void GTVideo::subtractBackground(cv::Mat& foreground_mask,const cv::Mat& frame_cur)
+ {
+  int thr_diff = 30;
+  uchar dR;
+  uchar dG;
+  uchar dB;
+
+  int width = source.at(0).cols;
+  int height = source.at(0).rows;
+
+  for(int i=0;i<height;i++)
+      for(int j=0;j<width;j++)
+      {
+          dR = abs(uchar(frame_cur.data[(i*width+j)*3])-background.data[(i*width+j)*3]);
+          dG = abs(uchar(frame_cur.data[(i*width+j)*3 + 1])-background.data[(i*width+j)*3 + 1]);
+          dB = abs(uchar(frame_cur.data[(i*width+j)*3 + 2])-background.data[(i*width+j)*3 + 2]);
+
+          if(qMax(qMax(dB,dG),dR)>thr_diff)
+          {
+              foreground_mask.data[i*width+j] = 255;
+          }
+          else
+          {
+              foreground_mask.data[i*width+j] = 0;
+          }
+
+      }
+  //to smooth out noise
+  //cv::erode(foreground_mask,foreground_mask,cv::Mat(cv::Size(3, 3),CV_8UC1));
+  //cv::dilate(foreground_mask,foreground_mask,cv::Mat(cv::Size(3, 3),CV_8UC1));
+
+
+
 
  }
+ void GTVideo::setForegroundMask()
+ {
+
+
+     for (int i=0; i<getFrameNumber(); i++)
+     {
+         cv::Mat foreground_mask(source.at(0).rows,source.at(0).cols,CV_8UC1);
+         subtractBackground(foreground_mask,source.at(i));
+         foregroundMask.push_back(foreground_mask);
+     }
+
+     //cv::imwrite("frame_cur.jpg",source.at(55));
+     //cv::imwrite("foregroundmask.jpg",foregroundMask.at(55));
+ }
+
+ void GTVideo::estimateBackground()
+ {
+  int buffer_size = 30;
+
+  uchar* arr_R = new uchar[buffer_size];
+  uchar* arr_G = new uchar[buffer_size];
+  uchar* arr_B = new uchar[buffer_size];
+
+  int width = source.at(0).cols;
+  int height = source.at(0).rows;
+
+  for(int i=0;i<height;i++)
+      for(int j=0;j<width;j++)
+         {
+          for(int k=1;k<=buffer_size;k++)
+             {
+              arr_R[k]= source.at(k*10).data[(i*width+j)*3];
+              arr_G[k]= source.at(k*10).data[(i*width+j)*3 + 1];
+              arr_B[k]= source.at(k*10).data[(i*width+j)*3 + 2];
+             }
+          background.data[(i*width+j)*3]=quick_select(arr_R,buffer_size);
+          background.data[(i*width+j)*3+1]=quick_select(arr_G,buffer_size);
+          background.data[(i*width+j)*3+2]=quick_select(arr_B,buffer_size);
+         }
+
+  cv::imwrite("background.jpg",background);
+ }
+
+uchar GTVideo::quick_select(uchar* arr, int n)
+{
+    int low, high ;
+     int median;
+     int middle, ll, hh;
+     uchar t;
+     low = 0 ; high = n-1 ; median = (low + high) / 2;
+     for (;;)
+     {
+         if (high <= low) /* One element only */
+             return arr[median] ;
+
+         if (high == low + 1) {  /* Two elements only */
+             if (arr[low] > arr[high])
+                 t=arr[low];
+                 arr[low]=arr[high];
+                 arr[high]=t;
+             return arr[median] ;}
+
+     /* Find median of low, middle and high items; swap into position low */
+     middle = (low + high) / 2;
+     if (arr[middle] > arr[high])
+     {      t=arr[middle];
+            arr[middle]=arr[high];
+            arr[high]=t;
+     }
+     if (arr[low] > arr[high])
+     {      t=arr[low];
+            arr[low]=arr[high];
+            arr[high]=t;
+     }
+     if (arr[middle] > arr[low])
+     {      t=arr[middle];
+            arr[middle]=arr[low];
+            arr[low]=t;
+     }
+
+     /* Swap low item (now in position middle) into position (low+1) */
+     {      t=arr[middle];
+            arr[middle]=arr[low+1];
+            arr[low+1]=t;
+     }
+
+     /* Nibble from each end towards middle, swapping items when stuck */
+     ll = low + 1;
+     hh = high;
+     for (;;) {
+         do ll++; while (arr[low] > arr[ll]) ;
+         do hh--; while (arr[hh]  > arr[low]) ;
+
+         if (hh < ll)
+         break;
+
+         {  t=arr[ll];
+            arr[ll]=arr[hh];
+            arr[hh]=t;
+         }
+
+     }
+
+     /* Swap middle item (in position low) back into correct position */
+            t=arr[low];
+            arr[low]=arr[hh];
+            arr[hh]=t;
+
+
+     /* Re-set active partition */
+     if (hh <= median)
+         low = ll;
+         if (hh >= median)
+         high = hh - 1;
+     }
+}
