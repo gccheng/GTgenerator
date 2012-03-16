@@ -254,6 +254,9 @@ void MainWindow::on_Button_prev_clicked()
 void MainWindow::on_actionGroundtruth_2_triggered()
 {
     ///--->test
-    gtv->generateGroundtruth(SNAKE);
+    if (QDir().exists("./result") || QDir().mkdir("./result"))
+    {
+        gtv->generateGroundtruth(SNAKE);
+    }
     ///<---test
 }
