@@ -1,1 +1,35 @@
-This is a tool to generate groundtruth of anomalies in a video.
+Last updated: 11:18:00, March 16, 2012
+
+This is for a tool to generate groundtruth of anomalies in a
+video. It accepts either video or images as input, as employs
+different methods to generate groundtruth images representing
+anomalies in a video. Now it only works on Linux platform.
+
+This README file contains:
+	++ How to setup and run the program
+	++ Description to features and functionalities
+	++ Disclaimer
+
+
+++How to run the code
+----------
+Prerequisite
+        o Linux OS
+	o Prerequisites indicated in Readme-matlab file
+	o Permission to create files and folders.
+	o All files coming together with this README.
+
+Setup and Run
+	o Unzip all the file to a folder denoted as $GTor$
+        o Follow the instruction in Readme-matlab to setup
+          run/development environment for the use of matlab
+          exported shared object libseg.so
+	o Copy libseq.so to /usr/lib, or for development:
+          add ./GTgenerator to LD_LIBRARY_PATH
+	o Run the program
+
+
+++ Features and Functionalities
+
+
+++DISCLAIMER

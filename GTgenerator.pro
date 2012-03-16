@@ -38,4 +38,6 @@ INCLUDEPATH += /usr/local/MATLAB/R2011a/extern/include
 LIBS += -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_features2d -lopencv_legacy
 LIBS += -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_features2d -lopencv_legacy
 LIBS += -L/opt/MATLAB/MATLAB_Compiler_Runtime/v715/runtime/glnx86 -lmwmclmcrrt
-LIBS += -L/home/cheng/Documents/Programming/CVOpenCV/MatlabExptC/MatlabCCode -lseg
+LIBS += -L./ -lseg
+# copy the libseg.so file to /usr/lib
+# OR add ./../GTgenerator to LD_LIBRARY_PATH under Build Environment under Projects
