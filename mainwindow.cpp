@@ -172,7 +172,7 @@ void MainWindow::videoload_completed(bool result)
         // since framecount is inacurate, so update it to 100% when loading finishes
 
         ui->loadvideo_progressBar->setMaximum(gtv->getFrameCount()-1);
-        ui->loadvideo_progressBar->setValue(gtv->getFrameNumber()-1);
+        ui->loadvideo_progressBar->setValue(gtv->getFrameNumber()-2);
         ui->loadvideo_progressBar->update();
 
         qDebug() << QString("Frames loaded: %1").arg(gtv->getFrameCount());
@@ -181,14 +181,8 @@ void MainWindow::videoload_completed(bool result)
         gtv->setBackground();
         gtv->estimateBackground();
 
-
-
         //to substract backgroud to get foregroundmask for every frame
         gtv->setForegroundMask();
-
-
-
-
     }
 }
 

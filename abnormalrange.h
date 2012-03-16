@@ -37,6 +37,7 @@ public:
     uint getStart() const;
     uint getEnd() const;
     const QVector<cv::Point>& getBoundaryPoints() const;
+    const cv::Mat& getROI() const;
 
 signals:
 public slots:

@@ -82,3 +82,7 @@ const QVector<cv::Point>& AbnormalRange::getBoundaryPoints() const
     return boundarypoints;
 }
 
+const cv::Mat& AbnormalRange::getROI() const
+{
+    return roi;
+}

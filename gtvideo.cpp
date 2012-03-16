@@ -3,6 +3,7 @@
 #include <QtCore/qmath.h>
 
 #include <opencv2/legacy/legacy.hpp>
+#include <fstream>
 
 GTVideo::GTVideo(QObject *parent) :
     QObject(parent)
@@ -205,7 +206,6 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
              const cv::Point **pBoundaryPoints = &pAddBoundary;
              cv::fillPoly(roi, pBoundaryPoints, &npts, 1, cv::Scalar(255));  //cv::Scalar(255,255,255)
 
-             abnormallist[iAb].setROI(roi);
              setGroundtruth(roi, iFrame);
 
              delete ipFrame;
@@ -250,14 +250,9 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
   //cv::erode(foreground_mask,foreground_mask,cv::Mat(cv::Size(3, 3),CV_8UC1));
   //cv::dilate(foreground_mask,foreground_mask,cv::Mat(cv::Size(3, 3),CV_8UC1));
 
-
-
-
  }
  void GTVideo::setForegroundMask()
  {
-
-
      for (int i=0; i<getFrameNumber(); i++)
      {
          cv::Mat foreground_mask(source.at(0).rows,source.at(0).cols,CV_8UC1);
@@ -269,17 +264,28 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
      //cv::imwrite("foregroundmask.jpg",foregroundMask.at(55));
  }
 
-<<<<<<< HEAD
  void GTVideo::snakeTracking2()
- {
-     if(source.isEmpty() || abnormallist.isEmpty())
+ {    
+     if(foregroundMask.isEmpty() || abnormallist.isEmpty())
      {
          qDebug() << "Video source and initial abnormal range must be set before tracking\n";
          return;
      }
+     // Initialize the MATLAB Compiler Runtime global state
+     if (!mclInitializeApplication(NULL,0))
+     {
+         std::cerr << "Could not initialize the application properly."
+                   <<  std::endl;
+     }
+     // Initialize the segmentation library
+     if (!libsegInitialize())
+     {
+         std::cerr << "Could not initialize the library properly."
+                   << std::endl;
+     }
 
      //initialize the groundtruth
-     cv::Mat eye = source.at(0);
+     cv::Mat eye = foregroundMask.at(0).clone();
      eye.setTo(cv::Scalar(0)); //cv::Scalar(0,0,0)
      grdtruth.fill(eye);
 
@@ -287,34 +293,54 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
      {
          uint start = abnormallist[iAb].getStart();
          uint end = abnormallist[iAb].getEnd();
-         int length = end-start+1;
+
          const QVector<cv::Point>& boundaryPoints = abnormallist[iAb].getBoundaryPoints();
          const int npts = boundaryPoints.size();
          const cv::Point *pAddBoundary = boundaryPoints.data();
          const cv::Point **pBoundaryPoints = &pAddBoundary;
 
          // initialize the segmentation mask
-         cv::Mat initmask;
-         cv::cvtColor(source[0], initmask, CV_RGB2GRAY);
-         initmask.setTo(cv::Scalar(0));
-         cv::fillPoly(initmask, pBoundaryPoints, &npts, 1, cv::Scalar(255));
+         cv::Mat initmask = abnormallist[iAb].getROI();
+
+         //cv::fillPoly(initmask, pBoundaryPoints, &npts, 1, cv::Scalar(255));
 
          // set tracked object as abnormal ROI
          for (uint iFrame=start; iFrame<=end; iFrame++)
          {
-             // update boundary using that in previous frame
-             cv::Mat grayFrame;
-             cv::cvtColor(source[iFrame], grayFrame, CV_RGB2GRAY);
+             cv::Mat grayFrame(foregroundMask.at(iFrame));
+             // save files
+             QString filename = "";
+             filename.sprintf("./result/%03d-origin.tif", iFrame);
+             cv::imwrite(filename.toStdString(), grayFrame);
 
-             cv::Mat resultImage = segmentByActiveContour(grayFrame, initmask, 250, false);
-             initmask = resultImage;
+             // generate groundtruth and update mask using that in previous frame
+             cv::Mat resultImage = segmentByActiveContour(grayFrame, initmask, 200, false);
+             if (NULL == resultImage.data)
+             {
+                 qDebug() << QString("No groudtruth generated for frame %1").arg(iFrame);
+                 continue;
+             }
+             initmask = resultImage.clone();
 
-             cv::imwrite("frame.tif", grayFrame);
-             cv::imwrite("result.tif", resultImage);
+             // set groudtruth result
+             setGroundtruth(resultImage, iFrame);
+
+             filename.sprintf("./result/%03d-result.tif", iFrame);
+             cv::imwrite(filename.toStdString(), resultImage);
          }
      }
+
+     mclTerminateApplication();
+     libsegTerminate();
  }
 
+ /** get the segmentation using active contour with initial mask. Note that the initalization
+   has to be done before calling this function (for an unknown reason)
+   * @param aSrc         the source image
+   * @param aInitMask    the initial mask for the segementation
+   * @param aMaxIts      maximum number of iteration
+   * @param aDisp        if intermediate results is shown (1-0)
+   */
  cv::Mat GTVideo::segmentByActiveContour(const cv::Mat& aSrc, const cv::Mat& aInitMask, int aMaxIts, bool aDisp)
  {
      if (NULL == aSrc.data)
@@ -324,7 +350,7 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
          return cv::Mat();
      }
 
-     // Initialize the MATLAB Compiler Runtime global state
+/*     // Initialize the MATLAB Compiler Runtime global state
      if (!mclInitializeApplication(NULL,0))
      {
          std::cerr << "Could not initialize the application properly."
@@ -338,7 +364,7 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
          std::cerr << "Could not initialize the library properly."
                    << std::endl;
          return cv::Mat();
-     }
+     }*/
 
      const int rows = aSrc.rows;
      const int cols = aSrc.cols;
@@ -357,6 +383,7 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
 
      // initial mask of segmentation
      cv::Mat initmask = aInitMask.clone();
+     cv::transpose(initmask, initmask);
      mwArray init_mask(rows, cols, mxUINT8_CLASS);
      init_mask.SetData(initmask.data, rows*cols);
 
@@ -389,16 +416,14 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
          }
      }
 
-      mclTerminateApplication();
-      libsegTerminate();
+/*  uniniatialize Matlab runtime
+    mclTerminateApplication();
+      libsegTerminate();*/
 
       return retImage;
  }
 
- void GTVideo::subtractBackground(const cv::Mat& bkgd)
-=======
  void GTVideo::estimateBackground()
->>>>>>> c4494f04a50484899058ad61ef63cfed2195d23c
  {
   int buffer_size = 30;
 
