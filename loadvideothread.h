@@ -4,7 +4,7 @@
 /*
  * Description: LoadVideoThread deals with loading user-specified
  *              video using another thread.
- * Create Date:
+ * Create Date: 02/10/2012
  * Last Update: ##/##/####: ************
  *
  */

@@ -2,13 +2,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDebug>
 
 #include "opencvheader.h"
 #include "window_addabnormalrange.h"
+#include "configuration.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     gtv = NULL;
     videoloader = NULL;
+    currState = UNINITIALIZED;
 }
 
 MainWindow::~MainWindow()
@@ -28,6 +29,11 @@ MainWindow::~MainWindow()
 GTVideo* MainWindow::getGTVideo() const
 {
     return gtv;
+}
+
+void MainWindow::setState(States s)
+{
+    currState = s;
 }
 
 //to open window to addabnormalrange with initial setup
@@ -178,12 +184,15 @@ void MainWindow::videoload_completed(bool result)
 
         qDebug() << QString("Frames loaded: %1").arg(gtv->getFrameCount());
 
-        //to generate background image of the loaded video
+        // to generate background image of the loaded video
         gtv->setBackground();
         gtv->estimateBackground();
 
-        //to substract backgroud to get foregroundmask for every frame
+        // to substract backgroud to get foregroundmask for every frame
         gtv->setForegroundMask();
+
+        // set state
+        currState = VIDEO_LOADED;
     }
 }
 
@@ -234,9 +243,9 @@ void MainWindow::on_Slider_videoloaded_sliderReleased()
 
 void MainWindow::on_actionAddBoundary_triggered()
 {
-    if (NULL != gtv)
+    if (((int)currState>=(int)VIDEO_LOADED) && (NULL != gtv))
     {
-    open_window_addabnormalrange();
+        open_window_addabnormalrange();
     }
     else
     {
@@ -254,10 +263,51 @@ void MainWindow::on_Button_prev_clicked()
 
 void MainWindow::on_actionGroundtruth_2_triggered()
 {
-    ///--->test
-    if (QDir().exists("./result") || QDir().mkdir("./result"))
+    if ((int)currState >= (int)CONF_FINISHED)
     {
-        gtv->generateGroundtruth(SNAKE);
+        // generate groundtruth
+        gtv->generateGroundtruth(enumTrackAlgo);
+
+        // save results
+        if (gtv->saveSourceToFiles(strOriginalFrames) &&
+            gtv->saveGroundtruthToFiles(strGroundtruthSavePath))
+        {
+            currState = TRUTH_SAVED;
+        }
     }
-    ///<---test
+    else
+    {
+        QMessageBox msgBox;
+        QString warning = "Finish the following prior generating groundtruth:\n"
+                "     Loading video;\n"
+                "     Selecting abnormal ranges;\n"
+                "     Configuration;";
+        msgBox.setText(warning);
+        msgBox.exec();
+    }
+}
+
+void MainWindow::on_actionConfiguration_triggered()
+{
+    configuration *pConf = new configuration();
+
+    qRegisterMetaType<TrackType>("TrackType");
+    connect(pConf, SIGNAL(configuration_finished(QString, QString, TrackType)),
+            this, SLOT(set_configuration(QString, QString, TrackType)), Qt::QueuedConnection);
+
+    pConf->open();
+}
+
+void MainWindow::set_configuration(QString gtPath, QString origframePath, TrackType trackAlgo)
+{
+    strGroundtruthSavePath = gtPath;
+    strOriginalFrames = origframePath;
+    enumTrackAlgo = trackAlgo;
+
+    currState = CONF_FINISHED;
+}
+
+void MainWindow::on_actionExit_triggered()
+{
+    this->close();
 }

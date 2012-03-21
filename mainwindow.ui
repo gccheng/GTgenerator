@@ -11,26 +11,19 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Groundtruth Generator for Video Analysis</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>30</y>
+      <y>10</y>
       <width>551</width>
-      <height>391</height>
+      <height>411</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0" colspan="5">
-      <widget class="QLabel" name="label_fcurr">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="4">
       <widget class="QProgressBar" name="loadvideo_progressBar">
        <property name="sizePolicy">
@@ -77,6 +70,13 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="0" colspan="5">
+      <widget class="QLabel" name="label_fcurr">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -107,10 +107,11 @@
     </property>
     <addaction name="actionGroundtruth_2"/>
    </widget>
-   <widget class="QMenu" name="menuCOnfig">
+   <widget class="QMenu" name="menuConfig">
     <property name="title">
      <string>Config</string>
     </property>
+    <addaction name="actionConfiguration"/>
    </widget>
    <widget class="QMenu" name="menuOthers">
     <property name="title">
@@ -119,10 +120,20 @@
     <addaction name="separator"/>
     <addaction name="actionAddBoundary"/>
    </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionManual"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout_GTgenerator"/>
+    <addaction name="actionAbout_authors"/>
+   </widget>
    <addaction name="menuImport"/>
-   <addaction name="menuExport"/>
-   <addaction name="menuCOnfig"/>
    <addaction name="menuOthers"/>
+   <addaction name="menuConfig"/>
+   <addaction name="menuExport"/>
+   <addaction name="menuAbout"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -131,35 +142,129 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionVideo"/>
+   <addaction name="actionImages"/>
+   <addaction name="actionAddBoundary"/>
+   <addaction name="actionConfiguration"/>
+   <addaction name="actionGroundtruth_2"/>
+   <addaction name="separator"/>
+   <addaction name="actionExit"/>
+   <addaction name="actionManual"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionVideo">
+   <property name="icon">
+    <iconset resource="ResFiles.qrc">
+     <normaloff>:/icons/res/video2.png</normaloff>:/icons/res/video2.png</iconset>
+   </property>
    <property name="text">
     <string>Video</string>
    </property>
+   <property name="toolTip">
+    <string>Import from video file</string>
+   </property>
+   <property name="shortcut">
+    <string>V</string>
+   </property>
   </action>
   <action name="actionImages">
+   <property name="icon">
+    <iconset resource="ResFiles.qrc">
+     <normaloff>:/icons/res/images.png</normaloff>:/icons/res/images.png</iconset>
+   </property>
    <property name="text">
     <string>Images</string>
    </property>
-  </action>
-  <action name="actionGroundtruth_2">
-   <property name="text">
-    <string>Groundtruth</string>
+   <property name="toolTip">
+    <string>Import from images</string>
+   </property>
+   <property name="shortcut">
+    <string>I</string>
    </property>
   </action>
-  <action name="actionHhh">
+  <action name="actionGroundtruth_2">
+   <property name="icon">
+    <iconset resource="ResFiles.qrc">
+     <normaloff>:/icons/res/export.png</normaloff>:/icons/res/export.png</iconset>
+   </property>
    <property name="text">
-    <string>addBoundary</string>
+    <string>Export</string>
+   </property>
+   <property name="toolTip">
+    <string>Export groundtruth</string>
+   </property>
+   <property name="shortcut">
+    <string>E</string>
    </property>
   </action>
   <action name="actionAddBoundary">
+   <property name="icon">
+    <iconset resource="ResFiles.qrc">
+     <normaloff>:/icons/res/ranges.png</normaloff>:/icons/res/ranges.png</iconset>
+   </property>
    <property name="text">
-    <string>AddBoundary</string>
+    <string>Add Boundary</string>
+   </property>
+   <property name="toolTip">
+    <string>Set abnormal ranges</string>
+   </property>
+   <property name="shortcut">
+    <string>B</string>
+   </property>
+  </action>
+  <action name="actionConfiguration">
+   <property name="icon">
+    <iconset resource="ResFiles.qrc">
+     <normaloff>:/icons/res/setting.png</normaloff>:/icons/res/setting.png</iconset>
+   </property>
+   <property name="text">
+    <string>Configuration</string>
+   </property>
+   <property name="shortcut">
+    <string>C</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="ResFiles.qrc">
+     <normaloff>:/icons/res/close.png</normaloff>:/icons/res/close.png</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="toolTip">
+    <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Esc</string>
+   </property>
+  </action>
+  <action name="actionManual">
+   <property name="icon">
+    <iconset resource="ResFiles.qrc">
+     <normaloff>:/icons/res/help.png</normaloff>:/icons/res/help.png</iconset>
+   </property>
+   <property name="text">
+    <string>Manual</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionAbout_GTgenerator">
+   <property name="text">
+    <string>About GTgenerator</string>
+   </property>
+  </action>
+  <action name="actionAbout_authors">
+   <property name="text">
+    <string>About authors</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="ResFiles.qrc"/>
+ </resources>
  <connections/>
 </ui>

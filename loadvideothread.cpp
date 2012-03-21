@@ -71,6 +71,10 @@ void LoadVideoThread::loadFromVideo()
             // append it to data model
             gtv->appendFrame(rgbFrame);
         }
+        cv::Mat truth((int)cap.get(CV_CAP_PROP_FRAME_HEIGHT),
+                      (int)cap.get(CV_CAP_PROP_FRAME_WIDTH),
+                      CV_8UC1, cv::Scalar(0));
+        gtv->initializeGroundtruth(frameno, truth);
         emit completeLoading(true);
         exit(0);
     }

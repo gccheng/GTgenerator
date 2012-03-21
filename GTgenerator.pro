@@ -15,7 +15,8 @@ SOURCES += main.cpp\
         abnormalrange.cpp \
     loadvideothread.cpp \
     window_addabnormalrange.cpp \
-    roi_window.cpp
+    roi_window.cpp \
+    configuration.cpp
 
 HEADERS  += mainwindow.h\
             gtvideo.h \
@@ -26,11 +27,14 @@ HEADERS  += mainwindow.h\
     opencvheader.h \
     window_addabnormalrange.h \
     roi_window.h \
-    libseg.h
+    libseg.h \
+    configuration.h \
+    sharedtypes.h
 
 FORMS    += mainwindow.ui \
     window_addabnormalrange.ui \
-    roi_window.ui
+    roi_window.ui \
+    configuration.ui
 
 INCLUDEPATH += /usr/local/include
 INCLUDEPATH += /usr/local/MATLAB/R2011a/extern/include
@@ -41,3 +45,6 @@ LIBS += -L/opt/MATLAB/MATLAB_Compiler_Runtime/v715/runtime/glnx86 -lmwmclmcrrt
 LIBS += -L./ -lseg
 # copy the libseg.so file to /usr/lib
 # OR add ./../GTgenerator to LD_LIBRARY_PATH under Build Environment under Projects
+
+RESOURCES += \
+    ResFiles.qrc

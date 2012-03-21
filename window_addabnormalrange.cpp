@@ -98,8 +98,6 @@ void window_addAbnormalRange::open_roi_window()
     newroiwindow->show();
 }
 
-
-
 void window_addAbnormalRange::on_pushButton_EditROI_clicked()
 {
     open_roi_window();
@@ -118,6 +116,9 @@ void window_addAbnormalRange::on_pushButton_done_clicked()
       pGTVideo->addAbnormalRange(*pAbRange);
     }
 
+    pMainWindow->setState(ABNORMALRANGE_SELECTED);
+
+    close();
 }
 
 void window_addAbnormalRange::on_spinBox_id_valueChanged(int arg1)

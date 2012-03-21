@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Abnormal Range Selection</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -69,12 +69,15 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="3" colspan="2">
-      <widget class="QPushButton" name="pushButton_EditROI">
+     <item row="5" column="1" colspan="3">
+      <widget class="QLabel" name="label_frame">
        <property name="text">
-        <string>Edit ROI</string>
+        <string/>
        </property>
       </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSpinBox" name="spinBox_id"/>
      </item>
      <item row="4" column="3" colspan="2">
       <widget class="QPushButton" name="pushButton_done">
@@ -83,15 +86,12 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1" colspan="3">
-      <widget class="QLabel" name="label_frame">
+     <item row="0" column="3" colspan="2">
+      <widget class="QPushButton" name="pushButton_EditROI">
        <property name="text">
-        <string>TextLabel</string>
+        <string>Edit ROI</string>
        </property>
       </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QSpinBox" name="spinBox_id"/>
      </item>
     </layout>
    </item>

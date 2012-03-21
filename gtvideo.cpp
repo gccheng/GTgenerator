@@ -4,6 +4,8 @@
 
 #include <opencv2/legacy/legacy.hpp>
 #include <fstream>
+#include <QProgressDialog>
+#include <QMessageBox>
 
 GTVideo::GTVideo(QObject *parent) :
     QObject(parent)
@@ -81,6 +83,11 @@ void GTVideo::setGroundtruth(const cv::Mat &truth, int position)
 
 }
 
+void GTVideo::initializeGroundtruth(int size, const cv::Mat& truth)
+{
+    grdtruth = QVector<cv::Mat>(size, truth);
+}
+
 // get the number of currently loaded frames
 int GTVideo::getFrameNumber() const
 {
@@ -138,6 +145,11 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
      {
      case SNAKE:
          snakeTracking2();
+         break;
+     default:
+         QMessageBox msgBox;
+         msgBox.setText("Unimplemented tracking algorithm!");
+         msgBox.exec();
      }
  }
 
@@ -215,6 +227,7 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
          }
      }
  }
+
  void GTVideo::setBackground()
  {
      background = source.at(0).clone();
@@ -268,9 +281,18 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
  {    
      if(foregroundMask.isEmpty() || abnormallist.isEmpty())
      {
-         qDebug() << "Video source and initial abnormal range must be set before tracking\n";
+         QMessageBox msgBox;
+         msgBox.setText("Video source and initial abnormal range must be set before tracking");
+         msgBox.exec();
          return;
      }
+
+     int totalAbnormalCount = getAbnormalFrameCount();
+     int currCount = 0;
+     QProgressDialog progress("Generating Groundtruth Images...", "Abort", 0, totalAbnormalCount-1);
+     progress.setWindowModality(Qt::WindowModal);
+     progress.setValue(currCount);
+
      // Initialize the MATLAB Compiler Runtime global state
      if (!mclInitializeApplication(NULL,0))
      {
@@ -295,40 +317,40 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
          uint end = abnormallist[iAb].getEnd();
 
          const QVector<cv::Point>& boundaryPoints = abnormallist[iAb].getBoundaryPoints();
-         const int npts = boundaryPoints.size();
          const cv::Point *pAddBoundary = boundaryPoints.data();
          const cv::Point **pBoundaryPoints = &pAddBoundary;
 
          // initialize the segmentation mask
          cv::Mat initmask = abnormallist[iAb].getROI();
 
-         //cv::fillPoly(initmask, pBoundaryPoints, &npts, 1, cv::Scalar(255));
-
          // set tracked object as abnormal ROI
          for (uint iFrame=start; iFrame<=end; iFrame++)
          {
-             cv::Mat grayFrame(foregroundMask.at(iFrame));
-             // save files
-             QString filename = "";
-             filename.sprintf("./result/%03d-origin.tif", iFrame);
-             cv::imwrite(filename.toStdString(), grayFrame);
-
-             // generate groundtruth and update mask using that in previous frame
-             cv::Mat resultImage = segmentByActiveContour(grayFrame, initmask, 200, false);
-             if (NULL == resultImage.data)
+             currCount++;
+             progress.setValue(currCount);
+             qDebug() << "snakeTracking2 " << currCount;
+             if(progress.wasCanceled())
              {
-                 qDebug() << QString("No groudtruth generated for frame %1").arg(iFrame);
-                 continue;
+                 return;
              }
-             initmask = resultImage.clone();
+             else
+             {
+                 cv::Mat grayFrame(foregroundMask.at(iFrame));
+                 // generate groundtruth and update mask using that in previous frame
+                 cv::Mat resultImage = segmentByActiveContour(grayFrame, initmask, 200, false);
+                 if (NULL == resultImage.data)
+                 {
+                     qDebug() << QString("No groudtruth generated for frame %1").arg(iFrame);
+                     continue;
+                 }
+                 initmask = resultImage.clone();
 
-             // set groudtruth result
-             setGroundtruth(resultImage, iFrame);
-
-             filename.sprintf("./result/%03d-result.tif", iFrame);
-             cv::imwrite(filename.toStdString(), resultImage);
+                 // set groudtruth result
+                 setGroundtruth(resultImage, iFrame);
+             }
          }
      }
+     progress.setValue(totalAbnormalCount-1);
 
      mclTerminateApplication();
      libsegTerminate();
@@ -349,22 +371,6 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
                    <<  std::endl;
          return cv::Mat();
      }
-
-/*     // Initialize the MATLAB Compiler Runtime global state
-     if (!mclInitializeApplication(NULL,0))
-     {
-         std::cerr << "Could not initialize the application properly."
-                   <<  std::endl;
-         return cv::Mat();
-     }
-
-     // Initialize the segmentation library
-     if (!libsegInitialize())
-     {
-         std::cerr << "Could not initialize the library properly."
-                   << std::endl;
-         return cv::Mat();
-     }*/
 
      const int rows = aSrc.rows;
      const int cols = aSrc.cols;
@@ -404,9 +410,6 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
      // retrieve result to cv::Mat format
      uchar result[rows*cols];
      imOutput.GetData(result, rows*cols);
-     //mxClassID classid = imOutput.ClassID();
-     //mwSize nDim = imOutput.NumberOfDimensions();
-     //const mwArray dims = imOutput.GetDimensions();
      cv::Mat retImage(rows, cols, CV_8UC1);
      for (int j=0; j<cols; j++)
      {
@@ -416,11 +419,18 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
          }
      }
 
-/*  uniniatialize Matlab runtime
-    mclTerminateApplication();
-      libsegTerminate();*/
+     return retImage;
+ }
 
-      return retImage;
+ // get total number of frames containing abnormal objects
+ int GTVideo::getAbnormalFrameCount() const
+ {
+     int count = 0;
+     for (int iAb=0; iAb<abnormallist.size(); iAb++)
+     {
+         count += (abnormallist[iAb].getEnd() - abnormallist[iAb].getStart() + 1);
+     }
+     return count;
  }
 
  void GTVideo::estimateBackground()
@@ -523,4 +533,67 @@ uchar GTVideo::quick_select(uchar* arr, int n)
          if (hh >= median)
          high = hh - 1;
      }
+}
+
+
+
+bool GTVideo::saveSourceToFiles(QString strPath)
+{
+    QProgressDialog progress("Save Original Frames...", "Cancel", 0, source.size()-1);
+    progress.setWindowModality(Qt::WindowModal);
+
+    int iFrame = 0;
+    QVector<cv::Mat>::iterator it_source = source.begin();
+    while (it_source != source.end())
+    {
+        iFrame++;
+        progress.setValue(iFrame);
+        if(progress.wasCanceled())
+        {
+            return false;
+        }
+        else
+        {
+            // save files
+            QString filename = "";
+            filename.sprintf("/%03d.tif", iFrame);
+            QString fullPath = strPath;
+            fullPath += filename;
+            cv::imwrite(fullPath.toStdString(), (*it_source));
+        }
+        it_source++;
+    }
+    progress.setValue(source.size()-1);
+    return true;
+}
+
+
+bool GTVideo::saveGroundtruthToFiles(QString strPath)
+{
+    QProgressDialog progress("Save Groundtruth...", "Cancel", 0, grdtruth.size()-1);
+    progress.setWindowModality(Qt::WindowModal);
+
+    int iFrame = 0;
+    QVector<cv::Mat>::iterator it_grdtruth = grdtruth.begin();
+    while (it_grdtruth != grdtruth.end())
+    {
+        iFrame++;
+        progress.setValue(iFrame);
+        if(progress.wasCanceled())
+        {
+            return false;
+        }
+        else
+        {
+            // save files
+            QString filename = "";
+            filename.sprintf("/%03d.tif", iFrame);
+            QString fullPath = strPath;
+            fullPath += filename;
+            cv::imwrite(fullPath.toStdString(), (*it_grdtruth));
+        }
+        it_grdtruth++;
+    }
+    progress.setValue(grdtruth.size()-1);
+    return true;
 }

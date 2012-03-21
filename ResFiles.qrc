@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>res/setting.png</file>
+        <file>res/video.png</file>
+        <file>res/images.png</file>
+        <file>res/export.png</file>
+        <file>res/video2.png</file>
+        <file>res/ranges.png</file>
+        <file>res/close.png</file>
+        <file>res/help.png</file>
+    </qresource>
+</RCC>

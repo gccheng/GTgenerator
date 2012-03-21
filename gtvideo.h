@@ -6,7 +6,7 @@
  *              generation. It accepts user's input video as
  *              source, user specified abnormal information,
  *              and generates the groundtruth in objects.
- * Create Date:
+ * Create Date: 02/09/2012
  * Last Update: ##/##/####: ************
  *
  */
@@ -17,9 +17,7 @@
 
 #include "abnormalrange.h"
 #include "libseg.h"
-
-enum SourceType {VIDEO = 1, IMAGES = 2};
-enum TrackType {SNAKE = 1};
+#include "sharedtypes.h"
 
 class GTVideo : public QObject
 {
@@ -36,7 +34,7 @@ public:
     void updateAbnormalRange(const AbnormalRange &ar);
     void addGroundtruth(const cv::Mat &truth, int position = -1);
     void setGroundtruth(const cv::Mat &truth, int position);
-
+    void initializeGroundtruth(int size, const cv::Mat& truth);
 
     int getFrameNumber() const;
     int getFrameCount() const;
@@ -53,13 +51,15 @@ public:
     void setForegroundMask(); //set foreground for all the video frames
     void estimateBackground();
     void subtractBackground(cv::Mat& foreground_mask,const cv::Mat& frame_cur); // subtract background image from source to get foreground mask
-    //void _setForeground(cv::Mat& foregroudmask,const cv::Mat& bkgd);
-    uchar quick_select(uchar* arr, int n); //quicksort for median value of the arr
+    uchar quick_select(uchar* arr, int n); //quicksort for median value of the arr   
+    bool saveSourceToFiles(QString strPath);
+    bool saveGroundtruthToFiles(QString strPath);
 
 private:
     void snakeTracking();                               // tracking using snake image
     void snakeTracking2();                              // a better implementation of snake tracking
     cv::Mat segmentByActiveContour(const cv::Mat& aSrc, const cv::Mat& aInitMask, int aMaxIts, bool aDisp);
+    int getAbnormalFrameCount() const;
 
 private:
     QVector<cv::Mat> source;                // frames of the input video

@@ -6,7 +6,7 @@
  *              specifies through user's interaction, including
  *              the start/end frame # of anomaly and the region
  *              of interest in the start-frame.
- * Create Date:
+ * Create Date: 02/09/2012
  * Last Update: ##/##/####: ************
  *
  */
