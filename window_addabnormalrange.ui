@@ -79,14 +79,14 @@
      <item row="0" column="1">
       <widget class="QSpinBox" name="spinBox_id"/>
      </item>
-     <item row="4" column="3" colspan="2">
+     <item row="4" column="4">
       <widget class="QPushButton" name="pushButton_done">
        <property name="text">
         <string>Done</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="3" colspan="2">
+     <item row="0" column="4">
       <widget class="QPushButton" name="pushButton_EditROI">
        <property name="text">
         <string>Edit ROI</string>

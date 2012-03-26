@@ -29,7 +29,8 @@ HEADERS  += mainwindow.h\
     roi_window.h \
     libseg.h \
     configuration.h \
-    sharedtypes.h
+    sharedtypes.h \
+    configparam.h
 
 FORMS    += mainwindow.ui \
     window_addabnormalrange.ui \

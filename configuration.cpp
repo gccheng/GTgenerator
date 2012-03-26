@@ -1,5 +1,6 @@
 #include "configuration.h"
 #include "ui_configuration.h"
+
 #include <QFileDialog>
 #include <QMessageBox>
 
@@ -35,9 +36,12 @@ void configuration::on_buttonBox_accepted()
     }
     else
     {
-        emit this->configuration_finished(ui->edit_groundtruthpath->text(),
-                                          ui->edit_origframepath->text(),
-                                          (TrackType)ui->comboBox_tracking_algo->currentIndex());
+        ConfigParam config(ui->edit_groundtruthpath->text(),
+                          ui->edit_origframepath->text(),
+                          (TrackType)ui->comboBox_tracking_algo->currentIndex(),
+                          ui->checkBox_morphopen->isChecked(),
+                          ui->edit_strelsize->text().toInt());
+        emit this->configuration_finished(config);
     }
 }
 

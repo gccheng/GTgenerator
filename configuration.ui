@@ -6,31 +6,37 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>604</width>
-    <height>456</height>
+    <width>560</width>
+    <height>391</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Configuration</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0" colspan="2">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetDefaultConstraint</enum>
+   </property>
+   <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_3">
-     <item row="3" column="2">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
+     <item row="3" column="4">
       <widget class="QPushButton" name="btn_origframes_path">
        <property name="text">
         <string>Select</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
         <string/>
        </property>
       </widget>
      </item>
-     <item row="7" column="1">
+     <item row="9" column="1" colspan="3">
       <widget class="QDialogButtonBox" name="buttonBox">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -43,29 +49,8 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Orig frames</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
+     <item row="3" column="1" colspan="3">
       <widget class="QLineEdit" name="edit_origframepath"/>
-     </item>
-     <item row="4" column="1">
-      <widget class="QComboBox" name="comboBox_tracking_algo">
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Tracking algo</string>
-       </property>
-      </widget>
      </item>
      <item row="0" column="0" colspan="2">
       <widget class="QLabel" name="label_5">
@@ -76,11 +61,34 @@
         </font>
        </property>
        <property name="text">
-        <string>Image Save path:</string>
+        <string>Image save path</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="2" column="1" colspan="3">
+      <widget class="QLineEdit" name="edit_groundtruthpath"/>
+     </item>
+     <item row="2" column="4">
+      <widget class="QPushButton" name="btn_grndtruth_path">
+       <property name="text">
+        <string>Select</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="2">
+      <widget class="QLabel" name="label_6">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Postprocessing to groundtruth</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="2">
       <spacer name="verticalSpacer_4">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -93,20 +101,100 @@
        </property>
       </spacer>
      </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="edit_groundtruthpath"/>
+     <item row="4" column="1" colspan="3">
+      <widget class="QComboBox" name="comboBox_tracking_algo">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0" colspan="2">
+      <widget class="QCheckBox" name="checkBox_morphopen">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::RightToLeft</enum>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Morphological opening</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Orig frames</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Tracking algo</string>
+       </property>
+      </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>Groundtruth</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
       </widget>
      </item>
-     <item row="2" column="2">
-      <widget class="QPushButton" name="btn_grndtruth_path">
+     <item row="6" column="3">
+      <widget class="QLabel" name="label_7">
+       <property name="toolTip">
+        <string>structure element size</string>
+       </property>
        <property name="text">
-        <string>Select</string>
+        <string>Strelem Size </string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="4">
+      <widget class="QLineEdit" name="edit_strelsize">
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>

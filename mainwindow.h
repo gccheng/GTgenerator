@@ -7,6 +7,7 @@
 
 #include "gtvideo.h"
 #include "loadvideothread.h"
+#include "configparam.h"
 
 class window_addAbnormalRange;
 class configuration;
@@ -39,16 +40,7 @@ private slots:
 
     void open_window_addabnormalrange();
 
-
-    //void on_horizontalSlider_sliderMoved(int position);
-
-    void on_Slider_videoloaded_sliderMoved(int position);
-
-    void on_Slider_videoloaded_sliderPressed();
-
     void on_Slider_videoloaded_valueChanged(int value);
-
-    void on_Slider_videoloaded_sliderReleased();
 
     void on_actionAddBoundary_triggered();
 
@@ -60,7 +52,11 @@ private slots:
 
     void set_configuration(QString gtPath, QString origframePath, TrackType trackAlgo);
 
+    void set_configuration(ConfigParam config);
+
     void on_actionExit_triggered();
+
+    void on_Button_next_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -72,6 +68,8 @@ private:
     QString strGroundtruthSavePath; // folder to save generated groundtruth images
     QString strOriginalFrames;      // folder to save original frames of the video
     TrackType enumTrackAlgo;        // algorithm for tracking
+    bool bPostProcessingGT;         // if post-process the groundtruth results (morphological opening)
+    int strelsize;                  // size of the structure element
 
     States currState;               // current state of the processing
 };

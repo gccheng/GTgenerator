@@ -328,7 +328,6 @@ const QVector<cv::Mat>& GTVideo::retrieveFrames() const
          {
              currCount++;
              progress.setValue(currCount);
-             qDebug() << "snakeTracking2 " << currCount;
              if(progress.wasCanceled())
              {
                  return;
@@ -596,4 +595,10 @@ bool GTVideo::saveGroundtruthToFiles(QString strPath)
     }
     progress.setValue(grdtruth.size()-1);
     return true;
+}
+
+
+void GTVideo::postProcessing(int strelsize)
+{
+    qWarning() << "Stub: GTVideo::postProcessing(int strelsize) not implemented yet!";
 }

@@ -48,12 +48,13 @@ public:
 public:
     void generateGroundtruth(TrackType tracktype);      // generate groundtruth through tracking
     void setBackground();
-    void setForegroundMask(); //set foreground for all the video frames
+    void setForegroundMask();                           // set foreground for all the video frames
     void estimateBackground();
     void subtractBackground(cv::Mat& foreground_mask,const cv::Mat& frame_cur); // subtract background image from source to get foreground mask
-    uchar quick_select(uchar* arr, int n); //quicksort for median value of the arr   
+    uchar quick_select(uchar* arr, int n);              // quicksort for median value of the arr
     bool saveSourceToFiles(QString strPath);
     bool saveGroundtruthToFiles(QString strPath);
+    void postProcessing(int strelsize);                 // post-processing the groundtruth images using morphological openning
 
 private:
     void snakeTracking();                               // tracking using snake image

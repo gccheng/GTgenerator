@@ -73,6 +73,27 @@ void MainWindow::stopTimer()
 // Load video from a video file
 void MainWindow::on_actionVideo_triggered()
 {
+    // check if the video is already loaded
+    if ((int)currState >= (int)VIDEO_LOADED)
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Video has already been loaded.");
+        msgBox.setInformativeText("Do you want to overwrite it?");
+        msgBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes);
+        msgBox.setDefaultButton(QMessageBox::No);
+        int ret = msgBox.exec();
+        if (QMessageBox::No == ret)
+        {
+            return;
+        }
+        else
+        {
+            delete gtv;
+            gtv = NULL;
+            currState = UNINITIALIZED;
+        }
+    }
+
     QString filter = tr("Video fiels(*.avi *.mpg  *.webm*.ogg *.ogv );; All files(*.*)");
     QString filePath = QFileDialog::getOpenFileName(this, tr("Import Video"), "", filter);
 
@@ -86,32 +107,45 @@ void MainWindow::on_actionVideo_triggered()
         }
         gtv = new GTVideo(VIDEO, filePath);
 
-        if (QDir().exists("./source") || QDir().mkdir("./source"))
+        if (NULL != videoloader)
         {
-            if (NULL != videoloader)
-            {
-                delete videoloader;
-            }
-            videoloader = new LoadVideoThread(filePath, VIDEO, gtv);
-            connect(videoloader, SIGNAL(completeLoading(bool)), this, SLOT(videoload_completed(bool)), Qt::QueuedConnection);
-            videoloader->start();
-            timer = new QTimer(this);     // timer begins
-            connect(timer, SIGNAL(timeout()), this, SLOT(updateSlider()));
+            delete videoloader;
+        }
+        videoloader = new LoadVideoThread(filePath, VIDEO, gtv);
+        connect(videoloader, SIGNAL(completeLoading(bool)), this, SLOT(videoload_completed(bool)), Qt::QueuedConnection);
+        videoloader->start();
+        timer = new QTimer(this);     // timer begins
+        connect(timer, SIGNAL(timeout()), this, SLOT(updateSlider()));
 
-            setupTimer(500, 'S');      // timer begins
-        }
-        else
-        {
-            QMessageBox msgBox;
-            msgBox.setText("Cannot create folder ./source in " + QDir::currentPath());
-            msgBox.exec();
-        }
+        setupTimer(500, 'S');      // timer begins
     }
 }
 
 // Load video from images in a user-specified folder
 void MainWindow::on_actionImages_triggered()
 {
+    // check if the video is already loaded
+    if ((int)currState >= (int)VIDEO_LOADED)
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Video has already been loaded.");
+        msgBox.setInformativeText("Do you want to overwrite it?");
+        msgBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes);
+        msgBox.setDefaultButton(QMessageBox::No);
+        msgBox.setIcon(QMessageBox::Warning);
+        int ret = msgBox.exec();
+        if (QMessageBox::No == ret)
+        {
+            return;
+        }
+        else
+        {
+            delete gtv;
+            gtv = NULL;
+            currState = UNINITIALIZED;
+        }
+    }
+
     // select directory when the frames are
     QString dirPath = QFileDialog::getExistingDirectory(this,
                                                         tr("Import Video"),
@@ -126,24 +160,17 @@ void MainWindow::on_actionImages_triggered()
         }
         gtv = new GTVideo(IMAGES, dirPath);
 
-        if (QDir().exists("./source") || QDir().mkdir("./source"))
+        if (NULL != videoloader)
         {
-            if (NULL != videoloader)
-            {
-                delete videoloader;
-            }
-            videoloader = new LoadVideoThread(dirPath, IMAGES, gtv);
-            connect(videoloader, SIGNAL(completeLoading(bool)), this, SLOT(videoload_completed(bool)), Qt::QueuedConnection);
-            videoloader->start();
+            delete videoloader;
+        }
+        videoloader = new LoadVideoThread(dirPath, IMAGES, gtv);
+        connect(videoloader, SIGNAL(completeLoading(bool)), this, SLOT(videoload_completed(bool)), Qt::QueuedConnection);
+        videoloader->start();
+        timer = new QTimer(this);     // timer begins
+        connect(timer, SIGNAL(timeout()), this, SLOT(updateSlider()));
 
-            setupTimer(500, 'S');     // timer begins
-        }
-        else
-        {
-            QMessageBox msgBox;
-            msgBox.setText("Cannot create folder ./source in " + QDir::currentPath());
-            msgBox.exec();
-        }
+        setupTimer(500, 'S');     // timer begins
     }
 }
 
@@ -196,22 +223,8 @@ void MainWindow::videoload_completed(bool result)
     }
 }
 
-void MainWindow::on_Slider_videoloaded_sliderMoved(int position)
-{
-
-}
-
-void MainWindow::on_Slider_videoloaded_sliderPressed()
-{
-    qDebug() << "slider is pressed!\n";
-
-}
-
 void MainWindow::on_Slider_videoloaded_valueChanged(int value)
 {
-
-    qDebug() << QString("value is changed to: %1").arg(value);
-
     if (NULL != gtv)
     {
         if(gtv->getFrameNumber()>0 && value>=0 && value<gtv->getFrameCount())
@@ -224,20 +237,20 @@ void MainWindow::on_Slider_videoloaded_valueChanged(int value)
             ui->label_fcurr->setPixmap(QPixmap::fromImage(img_curr));
             ui->label_fcurr->setScaledContents(true);
 
+            QString strCurrPos = "";
+            strCurrPos.append(QString("Frame:%1").arg(value));
+            statusBar()->showMessage(strCurrPos);
+
             ui->label_fcurr->update();
         }
     }
     else
     {
         QMessageBox msgBox;
-        msgBox.setText("Please select video to load!");
+        msgBox.setText("Please select video to preview!");
+        msgBox.setIcon(QMessageBox::Warning);
         msgBox.exec();
     }
-
-}
-
-void MainWindow::on_Slider_videoloaded_sliderReleased()
-{
 
 }
 
@@ -251,14 +264,29 @@ void MainWindow::on_actionAddBoundary_triggered()
     {
         QMessageBox msgBox;
         msgBox.setText("Please select video to load!");
+        msgBox.setIcon(QMessageBox::Warning);
         msgBox.exec();
     }
 }
 
+// previous frame
 void MainWindow::on_Button_prev_clicked()
 {
+    int currFramePos = ui->Slider_videoloaded->value();
+    if (currFramePos>=1)
+    {
+        emit ui->Slider_videoloaded->setSliderPosition(currFramePos-1);
+    }
+}
 
-
+// next frame
+void MainWindow::on_Button_next_clicked()
+{
+    int currFramePos = ui->Slider_videoloaded->value();
+    if (currFramePos<gtv->getFrameNumber())
+    {
+        emit ui->Slider_videoloaded->setSliderPosition(currFramePos+1);
+    }
 }
 
 void MainWindow::on_actionGroundtruth_2_triggered()
@@ -267,6 +295,12 @@ void MainWindow::on_actionGroundtruth_2_triggered()
     {
         // generate groundtruth
         gtv->generateGroundtruth(enumTrackAlgo);
+
+        // if post-processing (morphological openning) is specified
+        if (bPostProcessingGT)
+        {
+            gtv->postProcessing(strelsize);
+        }
 
         // save results
         if (gtv->saveSourceToFiles(strOriginalFrames) &&
@@ -282,6 +316,7 @@ void MainWindow::on_actionGroundtruth_2_triggered()
                 "     Loading video;\n"
                 "     Selecting abnormal ranges;\n"
                 "     Configuration;";
+        msgBox.setIcon(QMessageBox::Information);
         msgBox.setText(warning);
         msgBox.exec();
     }
@@ -291,9 +326,9 @@ void MainWindow::on_actionConfiguration_triggered()
 {
     configuration *pConf = new configuration();
 
-    qRegisterMetaType<TrackType>("TrackType");
-    connect(pConf, SIGNAL(configuration_finished(QString, QString, TrackType)),
-            this, SLOT(set_configuration(QString, QString, TrackType)), Qt::QueuedConnection);
+    qRegisterMetaType<ConfigParam>("ConfigParam");
+    connect(pConf, SIGNAL(configuration_finished(ConfigParam)),
+            this, SLOT(set_configuration(ConfigParam)), Qt::QueuedConnection);
 
     pConf->open();
 }
@@ -303,6 +338,17 @@ void MainWindow::set_configuration(QString gtPath, QString origframePath, TrackT
     strGroundtruthSavePath = gtPath;
     strOriginalFrames = origframePath;
     enumTrackAlgo = trackAlgo;
+
+    currState = CONF_FINISHED;
+}
+
+void MainWindow::set_configuration(ConfigParam config)
+{
+    strGroundtruthSavePath = config.strGroundtruthPath;
+    strOriginalFrames = config.strOrigFramePath;
+    enumTrackAlgo = config.trackAlgo;
+    bPostProcessingGT = config.morphopen;
+    strelsize = config.strelsize;
 
     currState = CONF_FINISHED;
 }

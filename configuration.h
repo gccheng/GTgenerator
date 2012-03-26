@@ -15,6 +15,7 @@
 #include <QAbstractButton>
 
 #include "sharedtypes.h"
+#include "configparam.h"
 
 namespace Ui {
     class configuration;
@@ -29,7 +30,8 @@ public:
     ~configuration();
 
  signals:
-    void configuration_finished(QString gtPath, QString origframePath, TrackType trackAlgo);
+    /*void configuration_finished(QString gtPath, QString origframePath, TrackType trackAlgo);*/
+    void configuration_finished(ConfigParam config);
 
 private slots:
     void on_buttonBox_accepted();
